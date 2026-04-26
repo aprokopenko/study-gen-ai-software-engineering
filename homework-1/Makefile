@@ -1,4 +1,4 @@
-.PHONY: up down restart logs shell composer test
+.PHONY: up down restart logs shell composer test phpunit setup
 
 up:
 	docker compose up -d --build
@@ -19,3 +19,10 @@ composer:
 
 test:
 	curl -i http://localhost:3000/
+
+phpunit:
+	docker compose exec php ./vendor/bin/phpunit
+
+setup:
+	docker compose exec php composer install
+	docker compose exec php php bin/setup.php
