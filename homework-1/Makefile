@@ -23,6 +23,9 @@ test:
 phpunit:
 	docker compose exec php ./vendor/bin/phpunit
 
-setup:
+setup: up
 	docker compose exec php composer install
 	docker compose exec php php bin/setup.php
+	docker compose exec php chown -R www-data:www-data /var/www/data
+	docker compose exec php chmod 755 /var/www/data
+	docker compose exec php chmod 644 /var/www/data/database.sqlite

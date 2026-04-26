@@ -1,6 +1,6 @@
 # AI Interaction Report — Project Setup
 
-## Round 1: Initial Request
+## Round 1: Initial Request (Kiro CLI)
 
 **Asked:** Initialize a PHP REST API project with Slim, SQLite, Medoo, running in Docker with docker-compose. Nginx as webserver. Makefile for shortcuts. Start with one hello world route.
 

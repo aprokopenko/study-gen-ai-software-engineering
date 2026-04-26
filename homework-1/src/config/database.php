@@ -4,5 +4,5 @@ declare(strict_types=1);
 
 return [
     'type'     => 'sqlite',
-    'database' => '/var/www/data/database.sqlite',
+    'database' => getenv('DATABASE_PATH') ?: '/var/www/data/database.sqlite',
 ];

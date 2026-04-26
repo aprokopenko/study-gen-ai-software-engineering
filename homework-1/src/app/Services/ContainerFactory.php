@@ -11,6 +11,11 @@ class ContainerFactory
 {
     private static ?Container $container = null;
 
+    public static function reset(): void
+    {
+        self::$container = null;
+    }
+
     public static function get(): Container
     {
         if (self::$container === null) {

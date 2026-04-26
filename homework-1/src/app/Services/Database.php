@@ -21,4 +21,9 @@ class Database
     {
         return $this->db;
     }
+
+    public function migrate(string $schemaPath): void
+    {
+        $this->db->pdo->exec(file_get_contents($schemaPath));
+    }
 }
