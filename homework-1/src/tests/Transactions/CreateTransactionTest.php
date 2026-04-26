@@ -11,8 +11,8 @@ class CreateTransactionTest extends AppTestCase
     public function testCreatesTransactionAndReturns201(): void
     {
         $body = $this->assertStatus(201, $this->postJson('/transactions', [
-            'fromAccount' => 'ACC-001',
-            'toAccount'   => 'ACC-002',
+            'fromAccount' => 'ACC-00001',
+            'toAccount'   => 'ACC-00002',
             'amount'      => 50.0,
             'currency'    => 'USD',
             'type'        => 'transfer',
@@ -26,7 +26,7 @@ class CreateTransactionTest extends AppTestCase
     public function testGeneratesIdAndTimestampWhenMissing(): void
     {
         $body = $this->assertStatus(201, $this->postJson('/transactions', [
-            'toAccount' => 'ACC-001',
+            'toAccount' => 'ACC-00001',
             'amount'    => 100.0,
             'currency'  => 'EUR',
             'type'      => 'deposit',

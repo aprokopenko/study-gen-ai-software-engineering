@@ -64,8 +64,8 @@ abstract class AppTestCase extends TestCase
     protected function seedTransaction(array $overrides = []): array
     {
         return $this->transactions->create(array_merge([
-            'from_account' => 'ACC-001',
-            'to_account'   => 'ACC-002',
+            'from_account' => 'ACC-00001',
+            'to_account'   => 'ACC-00002',
             'amount'       => 100.00,
             'currency'     => 'USD',
             'type'         => 'transfer',

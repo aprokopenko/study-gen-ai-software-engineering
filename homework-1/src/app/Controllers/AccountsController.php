@@ -48,4 +48,34 @@ class AccountsController extends AbstractController
 
         return $this->json($response, ['accountId' => $accountId, 'balances' => $result], 200);
     }
+
+    public function summary(Request $request, Response $response, array $args): Response
+    {
+        $accountId    = $args['accountId'];
+        $transactions = $this->repository->forAccount($accountId, 'completed');
+
+        $totalDeposits    = 0.0;
+        $totalWithdrawals = 0.0;
+        $mostRecent       = null;
+
+        foreach ($transactions as $tx) {
+            if ($tx['type'] === 'deposit' && $tx['to_account'] === $accountId) {
+                $totalDeposits += (float) $tx['amount'];
+            } elseif ($tx['type'] === 'withdrawal' && $tx['from_account'] === $accountId) {
+                $totalWithdrawals += (float) $tx['amount'];
+            }
+
+            if ($mostRecent === null || $tx['timestamp'] > $mostRecent) {
+                $mostRecent = $tx['timestamp'];
+            }
+        }
+
+        return $this->json($response, [
+            'accountId'             => $accountId,
+            'totalDeposits'         => $totalDeposits,
+            'totalWithdrawals'      => $totalWithdrawals,
+            'transactionCount'      => count($transactions),
+            'mostRecentTransaction' => $mostRecent,
+        ], 200);
+    }
 }

@@ -18,9 +18,35 @@ class TransactionRepository
         return $this->find($data['id']);
     }
 
+    public function filter(array $filters = []): array
+    {
+        $where = ['ORDER' => ['timestamp' => 'DESC']];
+
+        if (!empty($filters['accountId'])) {
+            $where['OR'] = [
+                'from_account' => $filters['accountId'],
+                'to_account'   => $filters['accountId'],
+            ];
+        }
+
+        if (!empty($filters['type'])) {
+            $where['type'] = $filters['type'];
+        }
+
+        if (!empty($filters['from']) && !empty($filters['to'])) {
+            $where['timestamp[<>]'] = [$filters['from'], $filters['to']];
+        } elseif (!empty($filters['from'])) {
+            $where['timestamp[>=]'] = $filters['from'];
+        } elseif (!empty($filters['to'])) {
+            $where['timestamp[<=]'] = $filters['to'];
+        }
+
+        return $this->db->query()->select('transactions', '*', $where) ?: [];
+    }
+
     public function all(): array
     {
-        return $this->db->query()->select('transactions', '*', ['ORDER' => ['timestamp' => 'DESC']]) ?: [];
+        return $this->filter();
     }
 
     public function find(string $id): ?array

@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Repositories\TransactionRepository;
+use App\Services\TransactionValidator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class TransactionsController extends AbstractController
 {
-    public function __construct(private TransactionRepository $repository) {}
+    public function __construct(
+        private TransactionRepository $repository,
+        private TransactionValidator $validator,
+    ) {}
 
     public function create(Request $request, Response $response): Response
     {
@@ -21,7 +25,7 @@ class TransactionsController extends AbstractController
             return $this->json($response, ['error' => 'Invalid JSON'], 400);
         }
 
-        $errors = $this->validate($data);
+        $errors = $this->validator->validate($data);
         if (!empty($errors)) {
             return $this->json($response, ['error' => 'Validation failed', 'details' => $errors], 400);
         }
@@ -41,7 +45,15 @@ class TransactionsController extends AbstractController
 
     public function index(Request $request, Response $response): Response
     {
-        $transactions = array_map([$this, 'format'], $this->repository->all());
+        $params = $request->getQueryParams();
+        $filters = array_filter([
+            'accountId' => $params['accountId'] ?? null,
+            'type'      => $params['type'] ?? null,
+            'from'      => $params['from'] ?? null,
+            'to'        => $params['to'] ?? null,
+        ]);
+
+        $transactions = array_map([$this, 'format'], $this->repository->filter($filters));
         return $this->json($response, $transactions, 200);
     }
 
@@ -54,26 +66,6 @@ class TransactionsController extends AbstractController
         }
 
         return $this->json($response, $this->format($transaction), 200);
-    }
-
-    private function validate(array $data): array
-    {
-        $errors = [];
-        $validTypes = ['deposit', 'withdrawal', 'transfer'];
-
-        if (!isset($data['amount']) || !is_numeric($data['amount']) || (float) $data['amount'] <= 0) {
-            $errors[] = ['field' => 'amount', 'message' => 'Amount must be a positive number'];
-        }
-
-        if (!isset($data['type']) || !in_array($data['type'], $validTypes, true)) {
-            $errors[] = ['field' => 'type', 'message' => 'Type must be one of: ' . implode(', ', $validTypes)];
-        }
-
-        if (empty($data['currency'])) {
-            $errors[] = ['field' => 'currency', 'message' => 'Currency is required'];
-        }
-
-        return $errors;
     }
 
     private function format(array $row): array

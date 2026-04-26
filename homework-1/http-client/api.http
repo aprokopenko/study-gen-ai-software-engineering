@@ -10,9 +10,9 @@ POST {{baseUrl}}/transactions
 Content-Type: application/json
 
 {
-  "fromAccount": "ACC-001",
-  "toAccount": "ACC-002",
-  "amount": 250.00,
+  "fromAccount": "ACC-00001",
+  "toAccount": "ACC-00002",
+  "amount": 251.00,
   "currency": "USD",
   "type": "transfer"
 }
@@ -24,7 +24,7 @@ POST {{baseUrl}}/transactions
 Content-Type: application/json
 
 {
-  "toAccount": "ACC-001",
+  "toAccount": "ACC-00001",
   "amount": 1000.00,
   "currency": "USD",
   "type": "deposit"
@@ -37,7 +37,7 @@ POST {{baseUrl}}/transactions
 Content-Type: application/json
 
 {
-  "fromAccount": "ACC-001",
+  "fromAccount": "ACC-00001",
   "amount": 150.00,
   "currency": "USD",
   "type": "withdrawal"
@@ -50,8 +50,8 @@ POST {{baseUrl}}/transactions
 Content-Type: application/json
 
 {
-  "fromAccount": "ACC-001",
-  "toAccount": "ACC-002",
+  "fromAccount": "ACC-00001",
+  "toAccount": "ACC-00002",
   "amount": -50.00,
   "currency": "USD",
   "type": "transfer"
@@ -59,16 +59,42 @@ Content-Type: application/json
 
 ###
 
-### Create — 400: zero amount
+### Create — 400: too many decimal places
 POST {{baseUrl}}/transactions
 Content-Type: application/json
 
 {
-  "fromAccount": "ACC-001",
-  "toAccount": "ACC-002",
-  "amount": 0,
+  "toAccount": "ACC-00001",
+  "amount": 100.123,
+  "currency": "USD",
+  "type": "deposit"
+}
+
+###
+
+### Create — 400: invalid account format
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+
+{
+  "fromAccount": "123",
+  "toAccount": "ACC-00002",
+  "amount": 50.00,
   "currency": "USD",
   "type": "transfer"
+}
+
+###
+
+### Create — 400: invalid currency code
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+
+{
+  "toAccount": "ACC-00001",
+  "amount": 50.00,
+  "currency": "FAKE",
+  "type": "deposit"
 }
 
 ###
@@ -78,7 +104,7 @@ POST {{baseUrl}}/transactions
 Content-Type: application/json
 
 {
-  "fromAccount": "ACC-001",
+  "fromAccount": "ACC-00001",
   "amount": 100.00,
   "currency": "USD",
   "type": "unknown"
@@ -99,6 +125,31 @@ GET {{baseUrl}}/transactions
 
 ###
 
+### Filter by accountId
+GET {{baseUrl}}/transactions?accountId=ACC-00001
+
+###
+
+### Filter by type
+GET {{baseUrl}}/transactions?type=transfer
+
+###
+
+### Filter by date range
+GET {{baseUrl}}/transactions?from=2024-01-01&to=2024-06-30
+
+###
+
+### Filter by from date only
+GET {{baseUrl}}/transactions?from=2024-04-01
+
+###
+
+### Filter combined: accountId + type
+GET {{baseUrl}}/transactions?accountId=ACC-00001&type=transfer
+
+###
+
 ### Get transaction by ID
 GET {{baseUrl}}/transactions/{{transactionId}}
 
@@ -112,11 +163,21 @@ GET {{baseUrl}}/transactions/non-existent-id
 ### ─── Accounts ───────────────────────────────────────────────────────────────
 
 ### Get balance for an active account
-GET {{baseUrl}}/accounts/ACC-001/balance
+GET {{baseUrl}}/accounts/ACC-00001/balance
 
 ###
 
 ### Get balance — returns empty balances for unknown account
-GET {{baseUrl}}/accounts/ACC-999/balance
+GET {{baseUrl}}/accounts/ACC-99999/balance
+
+###
+
+### Get summary for an account
+GET {{baseUrl}}/accounts/ACC-00001/summary
+
+###
+
+### Get summary — returns zeros for unknown account
+GET {{baseUrl}}/accounts/ACC-99999/summary
 
 ###

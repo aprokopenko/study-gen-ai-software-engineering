@@ -9,7 +9,8 @@
         "slim/psr7": "^1.7",
         "catfan/medoo": "^2.2",
         "php-di/php-di": "^7.0",
-        "ramsey/uuid": "^4.7"
+        "ramsey/uuid": "^4.7",
+        "alcohol/iso4217": "^4.0"
     },
     "autoload": {
         "psr-4": {

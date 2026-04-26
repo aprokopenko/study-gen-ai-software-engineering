@@ -15,4 +15,5 @@ return function (App $app): void {
     $app->get('/transactions/{id}', [TransactionsController::class, 'show']);
 
     $app->get('/accounts/{accountId}/balance', [AccountsController::class, 'balance']);
+    $app->get('/accounts/{accountId}/summary', [AccountsController::class, 'summary']);
 };
