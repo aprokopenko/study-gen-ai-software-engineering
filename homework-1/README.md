@@ -80,6 +80,8 @@ make phpunit
 
 Test coverage includes: creating transactions, validation errors, listing and filtering, balance calculation across currencies, transfer direction handling, and ignoring non-completed transactions.
 
+A ready-made [`http-client/api.http`](http-client/api.http) file is also included for manual endpoint testing. It works with JetBrains HTTP Client, VS Code [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension, and [httpYac](https://httpyac.github.io/).
+
 ---
 
 ## 🤖 AI Tools Used
