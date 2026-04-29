@@ -1,7 +1,7 @@
 # 🏦 Homework 1: Banking Transactions API
 
-> **Student Name**: [Your Name]  
-> **Date Submitted**: [Date]  
+> **Student Name**: Oleksandr Prokopenko  
+> **Date Submitted**: 28.04.2026  
 > **AI Tools Used**: Kiro CLI, Kiro CLI (JetBrains plugin), Claude Code CLI, Claude Code (VS Code plugin)
 
 ---
