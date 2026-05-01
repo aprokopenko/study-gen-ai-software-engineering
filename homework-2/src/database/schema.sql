@@ -1,0 +1,12 @@
+-- Example table definition (uncomment and adapt when adding entities):
+--
+-- CREATE TABLE IF NOT EXISTS tickets (
+--     id          TEXT PRIMARY KEY,
+--     customer_id TEXT NOT NULL,
+--     subject     TEXT NOT NULL,
+--     status      TEXT NOT NULL DEFAULT 'new',
+--     created_at  TEXT NOT NULL,
+--     updated_at  TEXT NOT NULL
+-- );
+--
+-- CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets (status);

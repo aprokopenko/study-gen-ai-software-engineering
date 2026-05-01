@@ -1,0 +1,13 @@
+# Dependencies
+src/vendor/
+
+# Database
+data/*.sqlite
+data/*.db
+
+# PHPUnit
+src/.phpunit.result.cache
+src/coverage/
+
+# OS / IDE
+.DS_Store
