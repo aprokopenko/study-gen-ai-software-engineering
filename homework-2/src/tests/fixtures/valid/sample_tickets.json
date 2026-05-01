@@ -1,0 +1,39 @@
+[
+  {
+    "customer_id": "cust-101",
+    "customer_email": "frank@example.com",
+    "customer_name": "Frank Miller",
+    "subject": "Payment declined",
+    "description": "My payment was declined even though my card has sufficient funds. Please investigate.",
+    "category": "billing_question",
+    "priority": "urgent",
+    "status": "new",
+    "tags": ["payment", "billing"],
+    "metadata": { "source": "web_form", "browser": "Chrome 120", "device_type": "desktop" }
+  },
+  {
+    "customer_id": "cust-102",
+    "customer_email": "grace@example.com",
+    "customer_name": "Grace Lee",
+    "subject": "Two-factor authentication not working",
+    "description": "The two-factor authentication code is not being sent to my phone number anymore.",
+    "category": "account_access",
+    "priority": "high",
+    "status": "in_progress",
+    "assigned_to": "agent-3",
+    "tags": ["2fa", "security"],
+    "metadata": { "source": "email" }
+  },
+  {
+    "customer_id": "cust-103",
+    "customer_email": "henry@example.com",
+    "customer_name": "Henry Wilson",
+    "subject": "API rate limit too low",
+    "description": "The current API rate limit of 100 requests per minute is too low for our use case.",
+    "category": "feature_request",
+    "priority": "medium",
+    "status": "new",
+    "tags": ["api", "rate-limit"],
+    "metadata": { "source": "api" }
+  }
+]

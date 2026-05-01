@@ -1,0 +1,6 @@
+customer_id,customer_email,customer_name,subject,description,category,priority,status,assigned_to,tags,metadata_source,metadata_browser,metadata_device_type
+cust-001,alice@example.com,Alice Smith,Cannot login to account,I have been unable to login to my account for the past two days. Password reset does not work.,account_access,urgent,new,,bug login,web_form,Chrome 120,desktop
+cust-002,bob@example.com,Bob Jones,Invoice shows wrong amount,My invoice for March shows an incorrect amount. I was charged twice for the same service.,billing_question,high,in_progress,agent-1,billing invoice,email,Firefox 121,desktop
+cust-003,carol@example.com,Carol White,App crashes on mobile,The mobile app crashes every time I try to open the settings page on my Android device.,technical_issue,medium,new,,,api,Chrome Mobile,mobile
+cust-004,dave@example.com,Dave Brown,Feature request: dark mode,Please add a dark mode option to the web interface. Many users have requested this.,feature_request,low,new,,dark-mode ui,web_form,Safari 17,desktop
+cust-005,eve@example.com,Eve Davis,Bug in export function,When exporting data to CSV the special characters are not encoded correctly causing garbled output.,bug_report,high,waiting_customer,agent-2,export csv bug,chat,Edge 120,desktop

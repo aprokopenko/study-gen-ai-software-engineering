@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tickets>
+  <ticket>
+    <customer_id>cust-bad</customer_id>
+    <!-- unclosed tag below -->
+    <subject>Broken XML
+  </ticket>
+</tickets>

@@ -9,7 +9,7 @@ setup:
 	$(DC_PHP) php bin/setup.php
 	$(DC_PHP) chown -R www-data:www-data /var/www/data
 	$(DC_PHP) chmod 755 /var/www/data
-	$(DC_PHP) chmod 644 /var/www/data/*.sqlite
+	$(DC_PHP) sh -c 'ls /var/www/data/*.sqlite 2>/dev/null && chmod 644 /var/www/data/*.sqlite || true'
 up:
 	docker compose up --build -d
 

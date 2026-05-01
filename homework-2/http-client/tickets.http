@@ -1,0 +1,108 @@
+### Health check
+GET {{baseUrl}}/
+
+###
+
+### List tickets
+GET {{baseUrl}}/tickets
+
+###
+
+### List tickets with filters
+GET {{baseUrl}}/tickets?category=technical_issue&priority=high&status=new&limit=10
+
+###
+
+### Create ticket
+# @name createTicket
+POST {{baseUrl}}/tickets
+Content-Type: application/json
+
+{
+  "customer_id": "cust-001",
+  "customer_email": "alice@example.com",
+  "customer_name": "Alice Smith",
+  "subject": "Cannot login to account",
+  "description": "I have been unable to login to my account for the past two days.",
+  "category": "account_access",
+  "priority": "urgent",
+  "tags": ["login", "access"],
+  "metadata": {
+    "source": "web_form",
+    "browser": "Chrome 120",
+    "device_type": "desktop"
+  }
+}
+
+> {%
+    client.variables.global.set("ticketId", response.body.id);
+%}
+
+###
+
+### Get ticket (paste ID from createTicket response)
+GET {{baseUrl}}/tickets/{{ticketId}}
+
+###
+
+### Update ticket
+PUT {{baseUrl}}/tickets/{{ticketId}}
+Content-Type: application/json
+
+{
+  "status": "in_progress",
+  "assigned_to": "agent-1",
+  "priority": "high"
+}
+
+###
+
+### Delete ticket
+DELETE {{baseUrl}}/tickets/{{ticketId}}
+
+###
+
+### Import — CSV
+POST {{baseUrl}}/tickets/import
+Content-Type: text/csv
+
+customer_id,customer_email,customer_name,subject,description,category,priority
+cust-101,bob@example.com,Bob Jones,App crashes on startup,The application crashes every time I try to open it on Windows 11.,technical_issue,high
+cust-102,carol@example.com,Carol White,Wrong invoice amount,My invoice shows double the expected amount for last month.,billing_question,medium
+
+###
+
+### Import — JSON
+POST {{baseUrl}}/tickets/import
+Content-Type: application/json
+
+[
+  {
+    "customer_id": "cust-201",
+    "customer_email": "dave@example.com",
+    "customer_name": "Dave Brown",
+    "subject": "Feature request: dark mode",
+    "description": "Please add a dark mode option to the web interface.",
+    "category": "feature_request",
+    "priority": "low"
+  }
+]
+
+###
+
+### Import — XML
+POST {{baseUrl}}/tickets/import
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<tickets>
+  <ticket>
+    <customer_id>cust-301</customer_id>
+    <customer_email>eve@example.com</customer_email>
+    <customer_name>Eve Davis</customer_name>
+    <subject>Password reset not working</subject>
+    <description>The password reset email is not arriving even after multiple attempts.</description>
+    <category>account_access</category>
+    <priority>high</priority>
+  </ticket>
+</tickets>

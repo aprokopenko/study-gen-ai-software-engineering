@@ -37,9 +37,22 @@ make chown      # fix host-side ownership of src/ and data/
 **Routes** — all defined in `app/routes.php` as a closure receiving the Slim `App` instance.
 
 **Error shapes:**
-- `400`: `{"error": "Validation failed", "details": [{"field": "...", "message": "..."}]}`
+- `400`: `{"error": "Validation failed", "details": {"field_name": "error message", ...}}`
 - `404`: `{"error": "Not found"}`
 
 ## Testing
 
-`AppTestCase` sets `DATABASE_PATH=:memory:` and calls `ContainerFactory::reset()` before each test. Helpers: `get()`, `postJson()`, `postRaw()`. Test files live in folders matching their controller (e.g. `tests/Health/`, `tests/Tickets/`). Target coverage: **>85%**.
+Tests are split into two suites:
+
+| Folder | Boundary | Uses |
+|---|---|---|
+| `tests/Unit/` | Single class, collaborators stubbed | No `App`, no DB |
+| `tests/Feature/` | Full HTTP request → response | `AppTestCase` |
+
+`AppTestCase` sets `DATABASE_PATH=:memory:` and calls `ContainerFactory::reset()` before each test. Helpers: `get()`, `postJson()`, `postRaw()`.
+
+Mirror production paths inside each folder (e.g. `app/Parsers/CsvTicketParser.php` → `tests/Unit/Parsers/CsvTicketParserTest.php`).
+
+Fixtures live in `tests/fixtures/valid/` and `tests/fixtures/invalid/`.
+
+Target coverage: **>85%**.

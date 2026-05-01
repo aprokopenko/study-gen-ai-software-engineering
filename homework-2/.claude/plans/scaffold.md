@@ -76,7 +76,7 @@ test     → curl -s http://localhost:3000/ (health check smoke test)
 
 ## Error Response Format
 Validation errors → 400:
-{"error": "Validation failed", "details": [{"field": "fieldName", "message": "..."}]}
+{"error": "Validation failed", "details": {"field_name": "error message", ...}}
 Not found → 404: {"error": "Not found"}
 
 ## What to build

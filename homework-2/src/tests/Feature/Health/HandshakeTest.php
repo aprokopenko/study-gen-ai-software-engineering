@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Health;
+namespace Tests\Feature\Health;
 
 use Tests\Concerns\AppTestCase;
 

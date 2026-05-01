@@ -15,7 +15,7 @@ class ContainerFactory
     {
         if (self::$instance === null) {
             $builder = new ContainerBuilder();
-            $builder->addDefinitions(require __DIR__ . '/../../config/container.php');
+            (require __DIR__ . '/../../config/container.php')($builder);
             self::$instance = $builder->build();
         }
 

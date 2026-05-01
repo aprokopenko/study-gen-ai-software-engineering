@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Concerns;
 
 use App\Services\ContainerFactory;
+use App\Services\Database;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,6 +23,7 @@ abstract class AppTestCase extends TestCase
         putenv('DATABASE_PATH=:memory:');
         ContainerFactory::reset();
         $this->app = require __DIR__ . '/../../bootstrap.php';
+        $this->app->getContainer()->get(Database::class)->migrate(__DIR__ . '/../../database/schema.sql');
     }
 
     protected function get(string $path): ResponseInterface

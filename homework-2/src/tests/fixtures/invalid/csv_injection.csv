@@ -1,0 +1,2 @@
+customer_id,customer_email,customer_name,subject,description,category,priority
+cust-inject,inject@example.com,=CMD|'/C calc'!A0,=1+1,=HYPERLINK("http://evil.com","click"),account_access,low
