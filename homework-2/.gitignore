@@ -1,5 +1,6 @@
 # Dependencies
 src/vendor/
+src/coverage
 
 # Database
 data/*.sqlite

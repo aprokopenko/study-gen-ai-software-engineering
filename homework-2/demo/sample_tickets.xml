@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tickets>
+  <ticket>
+    <customer_id>CUST071</customer_id>
+    <customer_email>walter.rose@example.com</customer_email>
+    <customer_name>Walter Rose</customer_name>
+    <subject>Cannot access admin dashboard</subject>
+    <description>I'm unable to access the admin dashboard even though I have admin privileges. The page shows a 403 error.</description>
+    <category>account_access</category>
+    <priority>urgent</priority>
+    <status>new</status>
+    <assigned_to>support_team_1</assigned_to>
+    <tags>
+      <tag>admin</tag>
+      <tag>access</tag>
+      <tag>urgent</tag>
+    </tags>
+    <source>web_form</source>
+    <browser>Chrome</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST072</customer_id>
+    <customer_email>helen.bennett@example.com</customer_email>
+    <customer_name>Helen Bennett</customer_name>
+    <subject>Billing system error</subject>
+    <description>I was charged an incorrect amount. The system shows a different price than what was displayed during checkout.</description>
+    <category>billing_question</category>
+    <priority>high</priority>
+    <status>new</status>
+    <assigned_to>support_team_3</assigned_to>
+    <tags>
+      <tag>billing</tag>
+      <tag>error</tag>
+      <tag>urgent</tag>
+    </tags>
+    <source>email</source>
+    <browser></browser>
+    <device_type></device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST073</customer_id>
+    <customer_email>roy.sanders@example.com</customer_email>
+    <customer_name>Roy Sanders</customer_name>
+    <subject>Application crashes on startup</subject>
+    <description>The application crashes immediately when I try to launch it. I've tried uninstalling and reinstalling but the issue persists.</description>
+    <category></category>
+    <priority></priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>crash</tag>
+      <tag>startup</tag>
+      <tag>critical</tag>
+    </tags>
+    <source>api</source>
+    <browser>Safari</browser>
+    <device_type>mobile</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST074</customer_id>
+    <customer_email>evelyn.price@example.com</customer_email>
+    <customer_name>Evelyn Price</customer_name>
+    <subject>Request for API webhook support</subject>
+    <description>We need webhook support to integrate with our internal systems. This would greatly improve our workflow.</description>
+    <category>feature_request</category>
+    <priority>high</priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>webhook</tag>
+      <tag>api</tag>
+      <tag>integration</tag>
+    </tags>
+    <source>api</source>
+    <browser>Firefox</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST075</customer_id>
+    <customer_email>ralph.bennett@example.com</customer_email>
+    <customer_name>Ralph Bennett</customer_name>
+    <subject>Production environment is down</subject>
+    <description>Our production environment is completely down. All users are unable to access the service. This is a critical emergency.</description>
+    <category></category>
+    <priority></priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>production</tag>
+      <tag>down</tag>
+      <tag>critical</tag>
+    </tags>
+    <source>api</source>
+    <browser>Chrome</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST076</customer_id>
+    <customer_email>louise.wood@example.com</customer_email>
+    <customer_name>Louise Wood</customer_name>
+    <subject>Cannot reset password</subject>
+    <description>I requested a password reset but never received the email. I've checked my spam folder and it's not there.</description>
+    <category>account_access</category>
+    <priority>high</priority>
+    <status>new</status>
+    <assigned_to>support_team_1</assigned_to>
+    <tags>
+      <tag>password</tag>
+      <tag>reset</tag>
+      <tag>email</tag>
+    </tags>
+    <source>web_form</source>
+    <browser>Chrome</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST077</customer_id>
+    <customer_email>aaron.cross@example.com</customer_email>
+    <customer_name>Aaron Cross</customer_name>
+    <subject>Data export functionality needed</subject>
+    <description>We need the ability to export our data in multiple formats including CSV, Excel, and JSON.</description>
+    <category>feature_request</category>
+    <priority>medium</priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>export</tag>
+      <tag>data</tag>
+      <tag>feature</tag>
+    </tags>
+    <source>web_form</source>
+    <browser>Firefox</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST078</customer_id>
+    <customer_email>marie.ellis@example.com</customer_email>
+    <customer_name>Marie Ellis</customer_name>
+    <subject>Payment gateway timeout</subject>
+    <description>When I try to complete my purchase the payment gateway times out. I've tried multiple times with no success.</description>
+    <category>billing_question</category>
+    <priority>urgent</priority>
+    <status>new</status>
+    <assigned_to>support_team_3</assigned_to>
+    <tags>
+      <tag>payment</tag>
+      <tag>timeout</tag>
+      <tag>urgent</tag>
+    </tags>
+    <source>web_form</source>
+    <browser>Safari</browser>
+    <device_type>mobile</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST079</customer_id>
+    <customer_email>willie.rogers@example.com</customer_email>
+    <customer_name>Willie Rogers</customer_name>
+    <subject>API documentation incomplete</subject>
+    <description>The API documentation is missing important details and examples. We need more comprehensive documentation.</description>
+    <category></category>
+    <priority></priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>documentation</tag>
+      <tag>api</tag>
+      <tag>incomplete</tag>
+    </tags>
+    <source>api</source>
+    <browser>Chrome</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST080</customer_id>
+    <customer_email>jean.kelly@example.com</customer_email>
+    <customer_name>Jean Kelly</customer_name>
+    <subject>Refund not processed</subject>
+    <description>I requested a refund 2 weeks ago but it hasn't been processed yet. Please check the status.</description>
+    <category>billing_question</category>
+    <priority>high</priority>
+    <status>new</status>
+    <assigned_to>support_team_3</assigned_to>
+    <tags>
+      <tag>refund</tag>
+      <tag>pending</tag>
+      <tag>urgent</tag>
+    </tags>
+    <source>email</source>
+    <browser></browser>
+    <device_type></device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST081</customer_id>
+    <customer_email>roger.howard@example.com</customer_email>
+    <customer_name>Roger Howard</customer_name>
+    <subject>Security vulnerability in search</subject>
+    <description>I found a potential SQL injection vulnerability in the search functionality. This needs immediate attention.</description>
+    <category>technical_issue</category>
+    <priority>urgent</priority>
+    <status>new</status>
+    <assigned_to>support_team_2</assigned_to>
+    <tags>
+      <tag>security</tag>
+      <tag>vulnerability</tag>
+      <tag>critical</tag>
+    </tags>
+    <source>api</source>
+    <browser>Chrome</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST082</customer_id>
+    <customer_email>betty.cox@example.com</customer_email>
+    <customer_name>Betty Cox</customer_name>
+    <subject>Mobile app performance slow</subject>
+    <description>The mobile app is very slow when loading large datasets. It takes several minutes to display results.</description>
+    <category></category>
+    <priority></priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>mobile</tag>
+      <tag>performance</tag>
+      <tag>slow</tag>
+    </tags>
+    <source>web_form</source>
+    <browser>Safari</browser>
+    <device_type>mobile</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST083</customer_id>
+    <customer_email>russell.ward@example.com</customer_email>
+    <customer_name>Russell Ward</customer_name>
+    <subject>Add dark mode theme</subject>
+    <description>Please add a dark mode theme option. Many users have requested this feature for better usability at night.</description>
+    <category>feature_request</category>
+    <priority>low</priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>theme</tag>
+      <tag>dark_mode</tag>
+      <tag>ui</tag>
+    </tags>
+    <source>web_form</source>
+    <browser>Chrome</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST084</customer_id>
+    <customer_email>norma.cox@example.com</customer_email>
+    <customer_name>Norma Cox</customer_name>
+    <subject>Cannot update profile information</subject>
+    <description>When I try to update my profile information the changes don't save. No error message is displayed.</description>
+    <category>technical_issue</category>
+    <priority>medium</priority>
+    <status>new</status>
+    <assigned_to>support_team_1</assigned_to>
+    <tags>
+      <tag>profile</tag>
+      <tag>update</tag>
+      <tag>bug</tag>
+    </tags>
+    <source>web_form</source>
+    <browser>Firefox</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST085</customer_id>
+    <customer_email>lawrence.stone@example.com</customer_email>
+    <customer_name>Lawrence Stone</customer_name>
+    <subject>Subscription cancellation request</subject>
+    <description>I want to cancel my subscription effective immediately. Please process this request and confirm.</description>
+    <category>billing_question</category>
+    <priority>medium</priority>
+    <status>new</status>
+    <assigned_to>support_team_3</assigned_to>
+    <tags>
+      <tag>cancellation</tag>
+      <tag>subscription</tag>
+    </tags>
+    <source>email</source>
+    <browser></browser>
+    <device_type></device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST086</customer_id>
+    <customer_email>vera.cox@example.com</customer_email>
+    <customer_name>Vera Cox</customer_name>
+    <subject>Email notifications not working</subject>
+    <description>I'm not receiving any email notifications even though I have them enabled in my settings.</description>
+    <category></category>
+    <priority></priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>email</tag>
+      <tag>notifications</tag>
+      <tag>bug</tag>
+    </tags>
+    <source>web_form</source>
+    <browser>Chrome</browser>
+    <device_type>mobile</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST087</customer_id>
+    <customer_email>douglas.stone@example.com</customer_email>
+    <customer_name>Douglas Stone</customer_name>
+    <subject>Add batch processing capability</subject>
+    <description>We need the ability to process multiple records in batch. Currently we can only process one at a time.</description>
+    <category>feature_request</category>
+    <priority>high</priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>batch</tag>
+      <tag>processing</tag>
+      <tag>feature</tag>
+    </tags>
+    <source>api</source>
+    <browser>Firefox</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST088</customer_id>
+    <customer_email>mabel.cox@example.com</customer_email>
+    <customer_name>Mabel Cox</customer_name>
+    <subject>Duplicate charge on account</subject>
+    <description>I was charged twice for the same transaction. Please investigate and refund the duplicate charge immediately.</description>
+    <category>billing_question</category>
+    <priority>urgent</priority>
+    <status>new</status>
+    <assigned_to>support_team_3</assigned_to>
+    <tags>
+      <tag>duplicate</tag>
+      <tag>charge</tag>
+      <tag>urgent</tag>
+    </tags>
+    <source>email</source>
+    <browser></browser>
+    <device_type></device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST089</customer_id>
+    <customer_email>howard.stone@example.com</customer_email>
+    <customer_name>Howard Stone</customer_name>
+    <subject>API rate limiting too restrictive</subject>
+    <description>The current API rate limit is too low for our use case. We need higher limits to support our application.</description>
+    <category>feature_request</category>
+    <priority>high</priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>api</tag>
+      <tag>rate_limit</tag>
+      <tag>limits</tag>
+    </tags>
+    <source>api</source>
+    <browser>Chrome</browser>
+    <device_type>desktop</device_type>
+  </ticket>
+  <ticket>
+    <customer_id>CUST090</customer_id>
+    <customer_email>edna.cox@example.com</customer_email>
+    <customer_name>Edna Cox</customer_name>
+    <subject>Cannot download invoice</subject>
+    <description>I'm unable to download my invoice from the account page. The download button doesn't work.</description>
+    <category></category>
+    <priority></priority>
+    <status>new</status>
+    <assigned_to></assigned_to>
+    <tags>
+      <tag>invoice</tag>
+      <tag>download</tag>
+      <tag>bug</tag>
+    </tags>
+    <source>web_form</source>
+    <browser>Safari</browser>
+    <device_type>mobile</device_type>
+  </ticket>
+</tickets>

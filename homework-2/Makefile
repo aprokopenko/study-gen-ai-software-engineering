@@ -30,6 +30,10 @@ composer:
 phpunit:
 	$(DC_PHP) ./vendor/bin/phpunit
 
+coverage:
+	$(DC_PHP) ./vendor/bin/phpunit --coverage-html /var/www/html/coverage
+	@echo "Report written to src/coverage/index.html"
+
 test:
 	curl -s http://localhost:3000/
 	
