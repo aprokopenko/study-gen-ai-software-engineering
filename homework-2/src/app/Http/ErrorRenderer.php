@@ -15,7 +15,7 @@ class ErrorRenderer implements ErrorRendererInterface
     {
         if ($exception instanceof ValidationException) {
             return (string) json_encode([
-                'error'   => 'Validation failed',
+                'error' => 'Validation failed',
                 'details' => $exception->getErrors(),
             ]);
         }

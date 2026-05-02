@@ -7,7 +7,7 @@ use App\Parsers\JsonTicketParser;
 use App\Parsers\ParserRegistry;
 use App\Parsers\XmlTicketParser;
 use App\Services\Classification\ClassifierInterface;
-use App\Services\Classification\NullClassifier;
+use App\Services\Classification\KeywordClassifier;
 use App\Services\Clock\ClockInterface;
 use App\Services\Clock\SystemClock;
 use App\Services\Database;
@@ -26,9 +26,14 @@ return function (ContainerBuilder $builder): void {
 
         Database::class => \DI\autowire(Database::class),
 
-        ClockInterface::class       => \DI\autowire(SystemClock::class),
+        ClockInterface::class => \DI\autowire(SystemClock::class),
         IdGeneratorInterface::class => \DI\autowire(UuidGenerator::class),
-        ClassifierInterface::class  => \DI\autowire(NullClassifier::class),
+        ClassifierInterface::class => function (): ClassifierInterface {
+            return new KeywordClassifier(
+                config('classification.categories'),
+                config('classification.priorities'),
+            );
+        },
 
         ValidationFactory::class => function (): ValidationFactory {
             return new ValidationFactory();
@@ -36,10 +41,10 @@ return function (ContainerBuilder $builder): void {
 
         ParserRegistry::class => function (ContainerInterface $c): ParserRegistry {
             return new ParserRegistry([
-                'text/csv'         => $c->get(CsvTicketParser::class),
+                'text/csv' => $c->get(CsvTicketParser::class),
                 'application/json' => $c->get(JsonTicketParser::class),
-                'application/xml'  => $c->get(XmlTicketParser::class),
-                'text/xml'         => $c->get(XmlTicketParser::class),
+                'application/xml' => $c->get(XmlTicketParser::class),
+                'text/xml' => $c->get(XmlTicketParser::class),
             ]);
         },
     ]);

@@ -23,16 +23,16 @@ class ImportService
             $rows = $parser->parse($raw);
         } catch (ParseException $e) {
             return new ImportSummary(total: 0, successful: 0, failed: 1, errors: [[
-                'row'     => 0,
-                'field'   => '',
+                'row' => 0,
+                'field' => '',
                 'message' => $e->getMessage(),
-                'raw'     => [],
+                'raw' => [],
             ]]);
         }
 
-        $total      = 0;
+        $total = 0;
         $successful = 0;
-        $errors     = [];
+        $errors = [];
 
         foreach ($rows as $row) {
             $total++;
@@ -42,27 +42,27 @@ class ImportService
             } catch (ValidationException $e) {
                 foreach ($e->getErrors() as $field => $message) {
                     $errors[] = [
-                        'row'     => $total,
-                        'field'   => $field,
+                        'row' => $total,
+                        'field' => $field,
                         'message' => $message,
-                        'raw'     => $row,
+                        'raw' => $row,
                     ];
                 }
             } catch (\Throwable $e) {
                 $errors[] = [
-                    'row'     => $total,
-                    'field'   => '',
+                    'row' => $total,
+                    'field' => '',
                     'message' => $e->getMessage(),
-                    'raw'     => $row,
+                    'raw' => $row,
                 ];
             }
         }
 
         return new ImportSummary(
-            total:      $total,
+            total: $total,
             successful: $successful,
-            failed:     $total - $successful,
-            errors:     $errors,
+            failed: $total - $successful,
+            errors: $errors,
         );
     }
 }

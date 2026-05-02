@@ -9,8 +9,9 @@ use Slim\App;
 return function (App $app): void {
     $app->get('/', HealthController::class);
 
-    // Import must be before /:id to avoid route conflict
-    $app->post('/tickets/import', [TicketsController::class, 'import']);
+    // Static sub-routes must be before /{id} to avoid route conflicts
+    $app->post('/tickets/import',                  [TicketsController::class, 'import']);
+    $app->post('/tickets/{id}/auto-classify',      [TicketsController::class, 'autoClassify']);
 
     $app->get('/tickets',          [TicketsController::class, 'index']);
     $app->post('/tickets',         [TicketsController::class, 'create']);

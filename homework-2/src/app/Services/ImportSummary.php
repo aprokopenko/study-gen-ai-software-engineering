@@ -17,10 +17,10 @@ class ImportSummary
     public function toArray(): array
     {
         return [
-            'total'      => $this->total,
+            'total' => $this->total,
             'successful' => $this->successful,
-            'failed'     => $this->failed,
-            'errors'     => $this->errors,
+            'failed' => $this->failed,
+            'errors' => $this->errors,
         ];
     }
 }

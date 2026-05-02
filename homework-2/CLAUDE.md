@@ -40,6 +40,10 @@ make chown      # fix host-side ownership of src/ and data/
 - `400`: `{"error": "Validation failed", "details": {"field_name": "error message", ...}}`
 - `404`: `{"error": "Not found"}`
 
+## Code Style
+
+Follow PSR-12. Do not align whitespace in arrays, object definitions, or assignments — keys and values go on the next character after the separator, no padding to align `=>` or `=` across lines.
+
 ## Testing
 
 Tests are split into two suites:

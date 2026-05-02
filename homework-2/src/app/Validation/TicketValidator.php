@@ -19,13 +19,13 @@ class TicketValidator
     public function validateCreate(array $data): void
     {
         $this->run($data, array_merge($this->commonRules(), [
-            'customer_id'    => 'required',
+            'customer_id' => 'required',
             'customer_email' => 'required|email',
-            'customer_name'  => 'required',
-            'subject'        => 'required|between:1,200',
-            'description'    => 'required|between:10,2000',
-            'category'       => 'required|in:' . $this->enumValues(Category::class),
-            'priority'       => 'required|in:' . $this->enumValues(Priority::class),
+            'customer_name' => 'required',
+            'subject' => 'required|between:1,200',
+            'description' => 'required|between:10,2000',
+            'category' => 'required|in:' . $this->enumValues(Category::class),
+            'priority' => 'required|in:' . $this->enumValues(Priority::class),
         ]));
     }
 
@@ -33,10 +33,10 @@ class TicketValidator
     {
         $this->run($data, array_merge($this->commonRules(), [
             'customer_email' => 'email',
-            'subject'        => 'between:1,200',
-            'description'    => 'between:10,2000',
-            'category'       => 'in:' . $this->enumValues(Category::class),
-            'priority'       => 'in:' . $this->enumValues(Priority::class),
+            'subject' => 'between:1,200',
+            'description' => 'between:10,2000',
+            'category' => 'in:' . $this->enumValues(Category::class),
+            'priority' => 'in:' . $this->enumValues(Priority::class),
         ]));
     }
 
@@ -71,14 +71,14 @@ class TicketValidator
         };
 
         return [
-            'status'               => 'in:' . $this->enumValues(Status::class),
-            'metadata.source'      => 'in:' . $this->enumValues(Source::class),
+            'status' => 'in:' . $this->enumValues(Status::class),
+            'metadata.source' => 'in:' . $this->enumValues(Source::class),
             'metadata.device_type' => 'in:' . $this->enumValues(DeviceType::class),
-            'tags'                 => 'array',
-            'tags.*'               => 'max:50',
-            'created_at'           => [$isoDate],
-            'updated_at'           => [$isoDate],
-            'resolved_at'          => [$isoDate],
+            'tags' => 'array',
+            'tags.*' => 'max:50',
+            'created_at' => [$isoDate],
+            'updated_at' => [$isoDate],
+            'resolved_at' => [$isoDate],
         ];
     }
 

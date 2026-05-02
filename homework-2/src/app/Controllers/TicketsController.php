@@ -39,8 +39,8 @@ class TicketsController extends AbstractController
 
     public function create(Request $request, Response $response): Response
     {
-        $autoClassify = (bool) ($request->getQueryParams()['auto_classify'] ?? false);
-        $ticket       = $this->ticketService->create((array) $request->getParsedBody(), $autoClassify);
+        $autoClassify = filter_var($request->getQueryParams()['auto_classify'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $ticket = $this->ticketService->create((array) $request->getParsedBody(), $autoClassify);
 
         return $this->json($response, $ticket->jsonSerialize(), 201);
     }
@@ -69,6 +69,25 @@ class TicketsController extends AbstractController
         $this->ticketService->delete($ticket);
 
         return $response->withStatus(204);
+    }
+
+    public function autoClassify(Request $request, Response $response, array $args): Response
+    {
+        try {
+            $ticket = $this->ticketService->findOrFail($args['id']);
+        } catch (TicketNotFoundException) {
+            throw new HttpNotFoundException($request);
+        }
+
+        $result = $this->ticketService->autoClassify($ticket);
+
+        return $this->json($response, [
+            'category' => $result->suggestedCategory->value,
+            'priority' => $result->suggestedPriority->value,
+            'confidence' => $result->confidence,
+            'reasoning' => $result->reasoning,
+            'keywords' => $result->keywords,
+        ]);
     }
 
     public function import(Request $request, Response $response): Response

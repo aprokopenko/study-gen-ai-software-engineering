@@ -90,6 +90,70 @@ Content-Type: application/json
 
 ###
 
+### Create with defaults (no category/priority)
+# @name createDefault
+POST {{baseUrl}}/tickets
+Content-Type: application/json
+
+{
+  "customer_id": "cust-401",
+  "customer_email": "frank@example.com",
+  "customer_name": "Frank Green",
+  "subject": "General inquiry",
+  "description": "Just wanted to ask a general question about the product."
+}
+
+> {%
+    client.variables.global.set("ticketId", response.body.id);
+%}
+
+###
+
+### Auto-classify on create — keywords drive category and priority
+# @name createAutoClassify
+POST {{baseUrl}}/tickets?auto_classify=true
+Content-Type: application/json
+
+{
+  "customer_id": "cust-402",
+  "customer_email": "grace@example.com",
+  "customer_name": "Grace Hall",
+  "subject": "Cannot login — critical production issue",
+  "description": "Getting a login error on every attempt. This is a critical production down situation."
+}
+
+> {%
+    client.variables.global.set("ticketId", response.body.id);
+%}
+
+###
+
+### Manual override — auto_classify=true but explicit category/priority win
+POST {{baseUrl}}/tickets?auto_classify=true
+Content-Type: application/json
+
+{
+  "customer_id": "cust-403",
+  "customer_email": "henry@example.com",
+  "customer_name": "Henry Ford",
+  "subject": "Password reset critical bug",
+  "description": "Steps to reproduce: login with wrong password three times. Security issue.",
+  "category": "other",
+  "priority": "low"
+}
+
+###
+
+### Re-classify existing ticket (always overwrites category/priority)
+POST {{baseUrl}}/tickets/{{ticketId}}/auto-classify
+
+###
+
+### Re-classify — 404 for unknown ticket
+POST {{baseUrl}}/tickets/does-not-exist/auto-classify
+
+###
+
 ### Import — XML
 POST {{baseUrl}}/tickets/import
 Content-Type: application/xml

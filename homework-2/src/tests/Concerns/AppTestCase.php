@@ -41,6 +41,21 @@ abstract class AppTestCase extends TestCase
         return $this->app->handle($request);
     }
 
+    protected function putJson(string $path, array $data): ResponseInterface
+    {
+        $body = (new StreamFactory())->createStream((string) json_encode($data));
+        $request = $this->createRequest('PUT', $path)
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody($body);
+
+        return $this->app->handle($request);
+    }
+
+    protected function delete(string $path): ResponseInterface
+    {
+        return $this->app->handle($this->createRequest('DELETE', $path));
+    }
+
     protected function postRaw(string $path, string $body, string $contentType): ResponseInterface
     {
         $stream = (new StreamFactory())->createStream($body);

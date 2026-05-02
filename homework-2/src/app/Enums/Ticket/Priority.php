@@ -7,7 +7,7 @@ namespace App\Enums\Ticket;
 enum Priority: string
 {
     case Urgent = 'urgent';
-    case High   = 'high';
+    case High = 'high';
     case Medium = 'medium';
-    case Low    = 'low';
+    case Low = 'low';
 }

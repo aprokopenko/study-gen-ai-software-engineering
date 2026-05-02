@@ -25,9 +25,9 @@ class ParserRegistry
         // Fallback to ?format= param
         if ($format !== null) {
             $map = [
-                'csv'  => 'text/csv',
+                'csv' => 'text/csv',
                 'json' => 'application/json',
-                'xml'  => 'application/xml',
+                'xml' => 'application/xml',
             ];
             $resolved = $map[strtolower($format)] ?? null;
             if ($resolved !== null && isset($this->parsers[$resolved])) {

@@ -64,15 +64,15 @@ class TicketRepository
     {
         $where = [];
 
-        if ($filter->category !== null)   $where['category']    = $filter->category;
-        if ($filter->priority !== null)   $where['priority']    = $filter->priority;
-        if ($filter->status !== null)     $where['status']      = $filter->status;
+        if ($filter->category !== null) $where['category'] = $filter->category;
+        if ($filter->priority !== null) $where['priority'] = $filter->priority;
+        if ($filter->status !== null) $where['status'] = $filter->status;
         if ($filter->customerId !== null) $where['customer_id'] = $filter->customerId;
         if ($filter->assignedTo !== null) $where['assigned_to'] = $filter->assignedTo;
 
         if ($filter->q !== null) {
             $where['OR'] = [
-                'subject[~]'     => $filter->q,
+                'subject[~]' => $filter->q,
                 'description[~]' => $filter->q,
             ];
         }
@@ -84,7 +84,7 @@ class TicketRepository
     {
         $dir = 'ASC';
         if (str_starts_with($sort, '-')) {
-            $dir  = 'DESC';
+            $dir = 'DESC';
             $sort = ltrim($sort, '-');
         }
 

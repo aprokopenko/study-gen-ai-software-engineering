@@ -6,10 +6,11 @@ use App\Services\ContainerFactory;
 
 function config(string $key, mixed $default = null): mixed
 {
+    /** @var array<string,mixed> */
     static $cache = [];
 
     $segments = explode('.', $key);
-    $file = array_shift($segments);
+    $file = (string) array_shift($segments);
 
     if (!isset($cache[$file])) {
         $path = __DIR__ . '/../config/' . $file . '.php';
