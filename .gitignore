@@ -7,6 +7,8 @@ __pycache__/
 target/
 build/
 dist/
+vendor/
+.gitkeep
 
 # Environment files
 .env
@@ -23,12 +25,16 @@ dist/
 .DS_Store
 Thumbs.db
 
+# Data
+*.sqlite
+
 # Logs
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.phpunit.result.cache
 
 # Test coverage
 coverage/
