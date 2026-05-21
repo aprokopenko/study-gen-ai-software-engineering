@@ -1,9 +1,9 @@
-// In-memory user store — no database, no hashing (intentional security issue)
+// In-memory user store — no database
 let users = [];
 let nextId = 1;
 
 function addUser({ username, email, password }) {
-  const user = { id: nextId++, username, email, password }; // plaintext password (security issue)
+  const user = { id: nextId++, username, email, password };
   users.push(user);
   return user;
 }
