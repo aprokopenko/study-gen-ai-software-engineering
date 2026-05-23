@@ -18,7 +18,8 @@ for bug_dir in "$BUGS_DIR"/*/; do
     continue
   fi
   echo "[run] bugs/$bug_id — invoking orchestrator"
-  claude -p --model claude-opus-4-7 "/pipeline-orchestrator $bug_dir"
+  ## DEBUG: removed `-p` option from command to enable interactive mode
+  claude --model claude-opus-4-7 --effort xhigh "/pipeline-orchestrator $bug_dir"
   processed=$((processed+1))
   echo '-----'
   if [[ -n "${MAX_BUGS:-}" && "$processed" -ge "$MAX_BUGS" ]]; then

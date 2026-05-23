@@ -13,11 +13,14 @@
 **Location:** line {{ N }} — function/block `{{ name }}`
 
 **Before:**
+
 ```js
 {{ exact current snippet that anchors the location }}
 ```
 
-**Fix intent:** {{ what condition, logic, or value to add/remove/change and why it fixes the root cause. Do not write replacement code. }}
+**Fix intent:** 
+
+{{ what condition, logic, or value to add/remove/change and why it fixes the root cause. Do not write replacement code. }}
 
 ---
 

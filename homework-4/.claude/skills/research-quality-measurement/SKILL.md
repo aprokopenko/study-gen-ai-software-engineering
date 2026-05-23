@@ -3,7 +3,7 @@ name: research-quality-measurement
 description: Defines research quality levels, the evaluation procedure to grade codebase research, and the evaluation report format.
 ---
 
-## Codebase research measurements qualuty levels
+## Codebase research measurements quality levels
 
 ### HIGH
 

@@ -23,6 +23,10 @@ Each step depends on the output of the previous one. **Always execute steps in o
 
 **Writes:** `research/codebase-research.md`
 
+Print: `[Step 1] Codebase research — starting`
+
+**Skip condition:** If `research/codebase-research.md` already exists, print `[Step 1 skipped] research/codebase-research.md already exists` and proceed directly to Step 2.
+
 **How:** Read `bug-context.md` to understand the defect. Investigate the issue and found relevant code in `src/`. Record every relevant finding as a `file:line` reference with a verbatim code excerpt. Capture the root cause, the failure mechanism, and the full scope of impact. Use `templates/codebase-research.template.md` as the artifact shape — do not free-form the output.
 
 After writing `research/codebase-research.md`, print:
@@ -36,6 +40,8 @@ Write "next" or "continue" to continue to Step 2 (research verification).
 ---
 
 ### Step 2 — Research verification
+
+Print: `[Step 2] Research verification — starting`
 
 **Performed by:** subagent `research-verifier`.
 
@@ -67,7 +73,11 @@ Write "next" or "continue" to continue to Step 3 (implementation planning).
 
 **Writes:** `implementation-plan.md`
 
-**How:** Re-read the codebase research. For each location that needs to change, record the exact `file:line`, quote the current snippet to anchor the location, and write a one-sentence fix intent describing what logic to add, remove, or change and why it resolves the root cause. Do not write replacement code — that is the bug-fixer's job. Use `templates/implementation-plan.template.md` as the artifact shape — do not free-form the output.
+Print: `[Step 3] Implementation planning — starting`
+
+**Skip condition:** If `implementation-plan.md` already exists, print `[Step 3 skipped] implementation-plan.md already exists` and proceed directly to Step 4.
+
+**How:** Re-read the codebase research. For each location that needs to change, record the exact `file:line`, quote the current snippet to anchor the location, and write a one-sentence fix intent describing what logic to add, remove, or change and why it resolves the root cause. Do not write replacement code — that is the bug-fixer's job. Use `templates/implementation-plan.template.md` as the artifact shape — do not free-form the output. Fill only the sections defined in the template; do not add any extra sections.
 
 After writing `implementation-plan.md`, print:
 ```
@@ -80,6 +90,8 @@ Write "next" or "continue" to continue to Step 4 (bug fix).
 ---
 
 ### Step 4 — Bug fix
+
+Print: `[Step 4] Bug fix — starting`
 
 **Performed by:** subagent `bug-fixer`.
 
@@ -107,6 +119,8 @@ Write "next" or "continue" to continue to Step 5 (security review).
 
 ### Step 5 — Security review
 
+Print: `[Step 5] Security review — starting`
+
 **Performed by:** subagent `security-verifier`.
 
 **Reads:** `fix-summary.md`, changed source files listed in it
@@ -132,6 +146,8 @@ Press Enter to continue to Step 6 (unit test generation), or Ctrl-C to abort.
 ---
 
 ### Step 6 — Unit test generation
+
+Print: `[Step 6] Unit test generation — starting`
 
 **Performed by:** subagent `unit-test-generator`.
 
