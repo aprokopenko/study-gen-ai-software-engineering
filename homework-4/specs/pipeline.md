@@ -11,7 +11,7 @@
 3. Each bug is treated as an isolated work unit: every artifact (research, plan, fix, security review, tests) lives next to its `bug-context.md` under `context/bugs/XXX/`.
 4. Codebase research is produced first by reading the source and the bug context, capturing the relevant file:line references and code excerpts the fix will rely on.
 5. A separate verification step independently re-checks every claim in the research and labels overall research quality, so downstream steps never plan on hallucinated references.
-6. The implementation plan is written only after research has been verified, so the plan is grounded in confirmed facts rather than raw research notes.
+6. The implementation plan is written only after the research has passed verification, so planning never proceeds on research that failed its quality check.
 7. A dedicated Bug Fixer agent applies the plan, runs the project's test command after the change, and records before/after snippets and the test outcome in a fix summary.
 8. A dedicated Security Verifier agent reviews only the changed files after the fix, classifies findings by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO), and never edits source.
 9. A dedicated Unit Test Generator agent writes new tests strictly for the code that changed during the fix, runs them, and records the results.
@@ -25,13 +25,14 @@
 17. After a successful run, every processed bug folder contains the full chain of artifacts (`codebase-research.md`, `verified-research.md`, `implementation-plan.md`, `fix-summary.md`, `security-report.md`, `test-report.md`) plus any new test files in `tests/`.
 
 ## Implementation Notes
-- Skills follow the directory-per-skill layout: each skill lives at `skills/<skill-name>/SKILL.md` (e.g. `skills/pipeline-orchestrator/SKILL.md`). The skill name is the folder name; the body file is always `SKILL.md`.
-- Orchestrator is a **skill** (`skills/pipeline-orchestrator/SKILL.md`), not an agent. It loads into a plain `claude` invocation and directs the session through the six steps for a single bug.
-- Research and Planning are **inline** steps performed by the orchestrator's own Claude instance — no separate agent files. The four `*.agent.md` files are sub-agents the orchestrator invokes by name.
+- Skills follow the directory-per-skill layout: each skill lives at `.claude/skills/<skill-name>/SKILL.md` (e.g. `.claude/skills/pipeline-orchestrator/SKILL.md`). The skill name is the folder name; the body file is always `SKILL.md`. A skill may ship supporting files next to `SKILL.md` (e.g. a `templates/` folder), as `research-quality-measurement` does for its report-format template.
+- Orchestrator is a **skill** (`.claude/skills/pipeline-orchestrator/SKILL.md`), not an agent. It loads into a plain `claude` invocation and directs the session through the six steps for a single bug.
+- Research and Planning are **inline** steps performed by the orchestrator's own Claude instance — no separate agent files. The four `.claude/agents/*.md` files are sub-agents the orchestrator invokes by name.
 - Step order per bug: (1) inline research → (2) `research-verifier` agent → (3) inline planning → (4) `bug-fixer` agent → (5) `security-verifier` agent → (6) `unit-test-generator` agent.
+- The inline plan (`implementation-plan.md`) records, per change location, the exact `file:line`, a snippet quoted to anchor the location, and a one-sentence fix intent — it does **not** contain replacement code. Writing the actual code is the `bug-fixer`'s job.
 - `run-pipeline.sh` is the only entry point. It iterates `context/bugs/*/` in lexical order and skips any directory that already contains `test-report.md`.
-- Per-bug invocation pattern: `claude --skill skills/pipeline-orchestrator/SKILL.md "<bug-dir>"`. The skill receives the bug directory path as its argument.
-- The orchestrator hands control to a sub-agent by name (the agent filename without `.agent.md`) and waits for it to finish; the sub-agent's report file on disk is the handoff signal.
+- Per-bug invocation pattern: `claude --skill .claude/skills/pipeline-orchestrator/SKILL.md "<bug-dir>"`. The skill receives the bug directory path as its argument.
+- The orchestrator hands control to a sub-agent by name (the agent filename without `.md`) and waits for it to finish; the sub-agent's report file on disk is the handoff signal.
 - After each sub-agent finishes, the orchestrator reads its report file and decides whether to continue: stop on missing report, on `Research Quality Assessment: LOW`, on `Overall Status: FAILED` in the fix summary, on any CRITICAL finding in the security report, or on failing tests in the test report. The reason for stopping is printed to the terminal.
 - Suggested model assignments (recorded in each agent's frontmatter):
   - `research-verifier` — `claude-opus-4-7` (careful fact-checking)
@@ -44,12 +45,12 @@
   |---|---|---|
   | Research (inline) | `src/`, `bug-context.md` | `research/codebase-research.md` |
   | Verify research | `codebase-research.md`, `src/` | `research/verified-research.md` |
-  | Plan (inline) | `verified-research.md` | `implementation-plan.md` |
+  | Plan (inline) | `bug-context.md`, `codebase-research.md` | `implementation-plan.md` |
   | Fix | `implementation-plan.md` | `fix-summary.md` + code edits |
   | Security review | `fix-summary.md` + changed files | `security-report.md` |
   | Generate tests | `fix-summary.md` + changed files | `test-report.md` + new test files |
-- The Research Verifier must use `skills/research-quality-measurement/SKILL.md` and emit a quality level (e.g. HIGH / MEDIUM / LOW) per that skill's vocabulary.
-- The Unit Test Generator must use `skills/unit-tests-FIRST/SKILL.md` and confirm each generated test against FIRST (Fast, Independent, Repeatable, Self-validating, Timely).
+- The Research Verifier must use `.claude/skills/research-quality-measurement/SKILL.md` as reference knowledge: follow its evaluation procedure, emit a quality level (e.g. HIGH / MEDIUM / LOW) per that skill's vocabulary, and write `verified-research.md` in the report format the skill defines (its `templates/verified-research.template.md`). The skill supplies the knowledge; the agent does the writing.
+- The Unit Test Generator must use `.claude/skills/unit-tests-FIRST/SKILL.md` as reference knowledge: confirm each generated test against the skill's FIRST checklist (Fast, Independent, Repeatable, Self-validating, Timely) and record the filled-in checklist results in `test-report.md`. The skill supplies the principles and checklist; the agent does the writing.
 - The Security Verifier writes a report only — it must not edit source. Findings include severity, `file:line`, and a remediation suggestion.
 - The pipeline targets the mini-app already documented in [specs/mini-app.md](mini-app.md); it must not reshape that app's stack or interfaces.
 
@@ -59,17 +60,18 @@
 - Mini-app already exists in `src/` and `tests/` per [specs/mini-app.md](mini-app.md)
 - Seeded bug folders exist: `context/bugs/001/bug-context.md`, `002/bug-context.md`, `003/bug-context.md`
 - `make test` passes against the mini-app in its "buggy" state (covers happy-path only)
-- No `agents/`, `skills/`, or `run-pipeline.sh` yet
+- No `.claude/agents/`, `.claude/skills/`, or `run-pipeline.sh` yet
 - No `research/`, `implementation-plan.md`, `fix-summary.md`, `security-report.md`, or `test-report.md` in any bug folder
 
 ### Ending context
-- `skills/pipeline-orchestrator/SKILL.md` — Orchestrator skill that drives the per-bug flow and gates each step on the previous report
-- `skills/research-quality-measurement/SKILL.md` — Research-quality levels used by the verifier
-- `skills/unit-tests-FIRST/SKILL.md` — FIRST principles used by the test generator
-- `agents/research-verifier.agent.md` — Verifies `codebase-research.md`
-- `agents/bug-fixer.agent.md` — Applies `implementation-plan.md` and runs `make test`
-- `agents/security-verifier.agent.md` — Reviews changed code, writes `security-report.md`
-- `agents/unit-test-generator.agent.md` — Generates tests for changed code, runs them
+- `.claude/skills/pipeline-orchestrator/SKILL.md` — Orchestrator skill that drives the per-bug flow and gates each step on the previous report
+- `.claude/skills/research-quality-measurement/SKILL.md` — Reusable knowledge: research-quality levels, evaluation procedure, and report format
+- `.claude/skills/research-quality-measurement/templates/verified-research.template.md` — Report-format template a consumer fills in to produce `verified-research.md`
+- `.claude/skills/unit-tests-FIRST/SKILL.md` — Reusable knowledge: FIRST principles + a verification checklist used by the test generator
+- `.claude/agents/research-verifier.md` — Verifies `codebase-research.md`
+- `.claude/agents/bug-fixer.md` — Applies `implementation-plan.md` and runs `make test`
+- `.claude/agents/security-verifier.md` — Reviews changed code, writes `security-report.md`
+- `.claude/agents/unit-test-generator.md` — Generates tests for changed code, runs them
 - `run-pipeline.sh` — Single-command entry point that iterates unprocessed bug dirs
 - For each bug (001, 002, 003):
   - `context/bugs/XXX/research/codebase-research.md`
@@ -87,49 +89,54 @@
 
 Create the empty folders the pipeline writes into, so subsequent tasks can drop files in without `mkdir -p` race conditions.
 
-**Files:** `agents/.gitkeep`, `skills/.gitkeep`
+**Files:** `.claude/agents/.gitkeep`, `.claude/skills/.gitkeep`
 
 **Details:**
-- Create `agents/` and `skills/` directories at repo root.
+- Create `.claude/agents/` and `.claude/skills/` directories under the project's `.claude/` folder.
 - Add a `.gitkeep` in each to keep them in git until real files arrive.
 
 **Verify:**
-- `test -d agents && test -d skills && echo ok` prints "ok"
+- `test -d .claude/agents && test -d .claude/skills && echo ok` prints "ok"
 
 ---
 
 ### 2. Create the research-quality-measurement skill
 
-Define the vocabulary the Research Verifier uses to grade research output. This is the single source of truth for what "HIGH/MEDIUM/LOW" research quality means in this pipeline.
+This is a **reusable knowledge skill** — it carries no pipeline-specific state and could be picked up by any agent or person grading research. It supplies three things: (1) the research quality levels, (2) the evaluation procedure to grade `codebase-research.md`, and (3) the report format, shipped as a separate template file. The skill does **not** generate the `verified-research.md` artifact itself — a consumer (here, the `research-verifier` agent) applies this knowledge and writes the artifact.
 
-**Files:** `skills/research-quality-measurement/SKILL.md`
+**Files:**
+- `.claude/skills/research-quality-measurement/SKILL.md`
+- `.claude/skills/research-quality-measurement/templates/verified-research.template.md`
 
 **Details:**
-- Frontmatter with `name`, `description`.
-- Body defines exactly three quality levels: **HIGH**, **MEDIUM**, **LOW**.
-- For each level, document the criteria: percentage of file:line references that verified, presence/absence of fabricated snippets, completeness of root-cause description.
-- Include a short "How the verifier should use this" section listing the required sections of `verified-research.md`: Verification Summary, Verified Claims, Discrepancies Found, Research Quality Assessment, References.
+- `SKILL.md` frontmatter with `name`, `description`. The `description` reflects the skill's three jobs (defines quality levels, the evaluation procedure, and the report format).
+- `SKILL.md` body defines exactly three quality levels: **HIGH**, **MEDIUM**, **LOW**. For each level, document the criteria: percentage of file:line references that verified, presence/absence of fabricated snippets, completeness of root-cause description.
+- `SKILL.md` includes an **"Evaluation procedure"** section: the ordered steps for grading research — open each cited file at the cited line, mark each claim verified/refuted, tally the verified percentage, then map that tally to a level using the criteria above.
+- `SKILL.md` includes a **report-format** section that points to `templates/verified-research.template.md` as the canonical shape of a verification report — the consumer fills the template rather than free-forming the report. This section describes the format; it does not perform the write.
+- `templates/verified-research.template.md` is a fill-in skeleton showcasing the report structure, with all five required sections as `##` headings and placeholder (`{{ ... }}`) guidance under each: **Verification Summary** (overall PASS/FAIL + the chosen quality level), **Verified Claims** (per-claim table: claim, `file:line`, verified?), **Discrepancies Found**, **Research Quality Assessment** (level + reasoning that cites the criteria), **References**.
 
 **Verify:**
-- File exists and contains the strings "HIGH", "MEDIUM", "LOW"
-- `grep -c "^## " skills/research-quality-measurement/SKILL.md` is at least 3
+- `SKILL.md` exists and contains the strings "HIGH", "MEDIUM", "LOW"
+- `SKILL.md` contains an "Evaluation procedure" section and references `templates/verified-research.template.md` as the report format
+- `templates/verified-research.template.md` exists and contains all five section headings (`grep -c "^## " ...` is at least 5)
 
 ---
 
 ### 3. Create the unit-tests-FIRST skill
 
-Define FIRST principles in one place so the Unit Test Generator can cite and apply them.
+This is a **reusable knowledge skill** — it carries no pipeline-specific state and could be picked up by anyone writing tests. It supplies two things: (1) the FIRST principles for writing good unit tests, and (2) a checklist to confirm a given test satisfies FIRST. The skill does **not** produce or write any report — recording results is the consumer's job (here, the `unit-test-generator` agent writes them into its `test-report.md`).
 
-**Files:** `skills/unit-tests-FIRST/SKILL.md`
+**Files:** `.claude/skills/unit-tests-FIRST/SKILL.md`
 
 **Details:**
-- Frontmatter with `name`, `description`.
+- Frontmatter with `name`, `description`. The `description` reflects the skill's two jobs (defines FIRST principles and a verification checklist).
 - Body defines: **F**ast, **I**ndependent, **R**epeatable, **S**elf-validating, **T**imely — one section per letter with a one-paragraph explanation and a one-line "applied to this project" hint (e.g. "Independent → use `beforeEach(clearUsers)`").
-- Include a "Checklist for each new test" section the generator must fill in inside `test-report.md`.
+- Include a **"FIRST checklist"** section: one yes/no check per principle that an author runs against a single test to confirm it satisfies FIRST. This is knowledge the consumer applies — the skill describes the checks, it does not fill them in or emit a report.
 
 **Verify:**
-- File exists; `grep -E "Fast|Independent|Repeatable|Self-validating|Timely" skills/unit-tests-FIRST/SKILL.md` shows all five terms
+- File exists; `grep -E "Fast|Independent|Repeatable|Self-validating|Timely" .claude/skills/unit-tests-FIRST/SKILL.md` shows all five terms
 - Contains a section titled "Checklist"
+- Body does not write or reference producing a report (reporting belongs to the test-generator agent)
 
 ---
 
@@ -137,7 +144,7 @@ Define FIRST principles in one place so the Unit Test Generator can cite and app
 
 This skill is loaded into a `claude` session and drives the six steps for a single bug directory passed as argument. It is not an agent — it directs the session inline and invokes the four sub-agents at the right moments, reading each sub-agent's report before deciding to continue.
 
-**Files:** `skills/pipeline-orchestrator/SKILL.md`
+**Files:** `.claude/skills/pipeline-orchestrator/SKILL.md`
 
 **Details:**
 - Frontmatter: `name: pipeline-orchestrator`, `description: ...`.
@@ -154,34 +161,34 @@ This skill is loaded into a `claude` session and drives the six steps for a sing
 
 **Verify:**
 - File exists with frontmatter and `name: pipeline-orchestrator`
-- Body references all four sub-agent names and both skill names (`research-quality-measurement`, `unit-tests-FIRST`)
+- Body references all four sub-agent names (the orchestrator calls sub-agents only; it does not load the knowledge skills itself — those are used by the agents)
 - Body documents each of the four stop conditions above
 
 ---
 
 ### 5. Create the research-verifier agent
 
-**Files:** `agents/research-verifier.agent.md`
+**Files:** `.claude/agents/research-verifier.md`
 
 **Details:**
 - Frontmatter: `name`, `description`, `model: claude-opus-4-7`, `tools: Read, Grep, Glob, Write`.
 - Role: read `<bug-dir>/research/codebase-research.md`, open each cited file at the cited line, and confirm the snippet matches the actual source.
-- Must use `skills/research-quality-measurement/SKILL.md` and produce `<bug-dir>/research/verified-research.md` with the required sections (Verification Summary, Verified Claims, Discrepancies Found, Research Quality Assessment, References).
+- Must use `.claude/skills/research-quality-measurement/SKILL.md` as reference knowledge: follow its evaluation procedure to grade the research, then write `<bug-dir>/research/verified-research.md` in the report format the skill defines (its `templates/verified-research.template.md`; sections: Verification Summary, Verified Claims, Discrepancies Found, Research Quality Assessment, References). The skill defines levels/procedure/format only — this agent performs the evaluation and writes the artifact.
 - Must not edit source code.
 
 **Verify:**
 - File exists with frontmatter `model: claude-opus-4-7`
-- Body references `skills/research-quality-measurement/SKILL.md` and `verified-research.md`
+- Body references `.claude/skills/research-quality-measurement/SKILL.md` and `verified-research.md`
 
 ---
 
 ### 6. Create the bug-fixer agent
 
-**Files:** `agents/bug-fixer.agent.md`
+**Files:** `.claude/agents/bug-fixer.md`
 
 **Details:**
 - Frontmatter: `name`, `description`, `model: claude-haiku-4-5`, `tools: Read, Edit, Write, Bash`.
-- Role: read `<bug-dir>/implementation-plan.md`, apply the changes as specified, run `make test` after each file change, and write `<bug-dir>/fix-summary.md`.
+- Role: read `<bug-dir>/implementation-plan.md`, implement the fix intent specified in the plan (the plan gives intent and a location anchor, not replacement code — the fixer writes the actual code), run `make test` after each file change, and write `<bug-dir>/fix-summary.md`.
 - `fix-summary.md` sections: Changes Made (per file: location, before, after, test result), Overall Status (PASSED / FAILED), Manual Verification, References.
 - On test failure: stop, document the failing test output verbatim in fix-summary.md, set `Overall Status: FAILED`, do not continue.
 
@@ -194,7 +201,7 @@ This skill is loaded into a `claude` session and drives the six steps for a sing
 
 ### 7. Create the security-verifier agent
 
-**Files:** `agents/security-verifier.agent.md`
+**Files:** `.claude/agents/security-verifier.md`
 
 **Details:**
 - Frontmatter: `name`, `description`, `model: claude-opus-4-7`, `tools: Read, Grep, Glob, Write`.
@@ -211,17 +218,17 @@ This skill is loaded into a `claude` session and drives the six steps for a sing
 
 ### 8. Create the unit-test-generator agent
 
-**Files:** `agents/unit-test-generator.agent.md`
+**Files:** `.claude/agents/unit-test-generator.md`
 
 **Details:**
 - Frontmatter: `name`, `description`, `model: claude-sonnet-4-6`, `tools: Read, Write, Bash`.
 - Role: read `<bug-dir>/fix-summary.md` and the changed source files; generate Jest + supertest tests **only for the changed code**; run `make test`; write `<bug-dir>/test-report.md`.
-- Must use `skills/unit-tests-FIRST/SKILL.md` and include the FIRST checklist per generated test in `test-report.md`.
+- Must use `.claude/skills/unit-tests-FIRST/SKILL.md` as reference knowledge: apply its FIRST checklist to each generated test and record the filled-in checklist results per test in `test-report.md`. The skill supplies the principles and checklist; this agent does the writing.
 - New tests go under `tests/` with descriptive filenames (e.g. `tests/auth.duplicate-email.test.js`).
 
 **Verify:**
 - File exists with frontmatter `model: claude-sonnet-4-6`
-- Body references `skills/unit-tests-FIRST/SKILL.md`, `test-report.md`, and `make test`
+- Body references `.claude/skills/unit-tests-FIRST/SKILL.md`, `test-report.md`, and `make test`
 
 ---
 
@@ -250,7 +257,7 @@ for bug_dir in "$BUGS_DIR"/*/; do
     continue
   fi
   echo "[run]  $bug_id — invoking orchestrator"
-  claude --skill "$ROOT/skills/pipeline-orchestrator/SKILL.md" "$bug_dir"
+  claude --skill "$ROOT/.claude/skills/pipeline-orchestrator/SKILL.md" "$bug_dir"
   processed=$((processed+1))
 done
 
