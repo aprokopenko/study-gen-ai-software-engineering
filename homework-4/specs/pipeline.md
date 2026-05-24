@@ -12,7 +12,7 @@
 4. Codebase research is produced first by reading the source and the bug context, capturing the relevant file:line references and code excerpts the fix will rely on.
 5. A separate verification step independently re-checks every claim in the research and labels overall research quality, so downstream steps never plan on hallucinated references.
 6. The implementation plan is written only after the research has passed verification, so planning never proceeds on research that failed its quality check.
-7. A dedicated Bug Fixer agent applies the plan, runs the project's test command after the change, and records before/after snippets and the test outcome in a fix summary.
+7. A dedicated Bug Fixer agent applies the plan, runs the project's test suite once all changes are in place (retrying its own fix a bounded number of times if it broke something), and records before/after snippets and the test outcome in a fix summary.
 8. A dedicated Security Verifier agent reviews only the changed files after the fix, classifies findings by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO), and never edits source.
 9. A dedicated Unit Test Generator agent writes new tests strictly for the code that changed during the fix, runs them, and records the results.
 10. Two reusable knowledge skills are shipped with the pipeline: one defining research-quality levels used by the verifier, one defining the FIRST principles used by the test generator.
@@ -36,8 +36,8 @@
 - After each sub-agent finishes, the orchestrator reads its report file and decides whether to continue: stop on missing report, on `Research Quality Assessment: LOW`, on `Overall Status: FAILED` in the fix summary, on any CRITICAL finding in the security report, or on failing tests in the test report. The reason for stopping is printed to the terminal.
 - Suggested model assignments (recorded in each agent's frontmatter):
   - `research-verifier` — `claude-opus-4-7` (careful fact-checking)
-  - `bug-fixer` — `claude-haiku-4-5` (routine plan execution, cheap/fast)
-  - `security-verifier` — `claude-opus-4-7` (security reasoning)
+  - `bug-fixer` — `haiku` with `effort: max` (cheap/fast model, but max reasoning effort for correct code edits)
+  - `security-verifier` — `opus` with `effort: high` (security reasoning)
   - `unit-test-generator` — `claude-sonnet-4-6` (test scaffolding)
 - Test execution inside agents must use `make test` (which runs `docker compose run --rm app npm test`) — never invoke `npm` on the host. This matches the project-wide rule that Node.js runs only inside Docker.
 - File handoff contract between steps:
@@ -187,13 +187,14 @@ This skill is loaded into a `claude` session and drives the six steps for a sing
 **Files:** `.claude/agents/bug-fixer.md`
 
 **Details:**
-- Frontmatter: `name`, `description`, `model: claude-haiku-4-5`, `tools: Read, Edit, Write, Bash`.
-- Role: read `<bug-dir>/implementation-plan.md`, implement the fix intent specified in the plan (the plan gives intent and a location anchor, not replacement code — the fixer writes the actual code), run `make test` after each file change, and write `<bug-dir>/fix-summary.md`.
-- `fix-summary.md` sections: Changes Made (per file: location, before, after, test result), Overall Status (PASSED / FAILED), Manual Verification, References.
-- On test failure: stop, document the failing test output verbatim in fix-summary.md, set `Overall Status: FAILED`, do not continue.
+- Frontmatter: `name`, `description`, `model: haiku`, `effort: max`, `tools: Read, Edit, Write, Bash`.
+- Role: read `<bug-dir>/implementation-plan.md`, implement the fix intent specified in the plan (the plan gives intent and a location anchor, not replacement code — the fixer writes the actual code following project conventions), and write `<bug-dir>/fix-summary.md`.
+- Apply **all** plan changes before running tests — a multi-file fix may be in a broken intermediate state until complete. Do not run `make test` between individual edits; run it once after every change is applied.
+- Self-check on failure: if the failing tests are all in files the fixer edited, retry the fix up to **2 times** (3 `make test` runs total); never edit test files or files not listed in the plan; treat failures in unrelated files as pre-existing and do not retry. Set `Overall Status` only after the final run.
+- `fix-summary.md` sections: Status (`Overall Status: PASSED` / `Overall Status: FAILED` verbatim), Changes Made (per file: location, before, after), Test Output (verbatim output of the final `make test` run), Manual Verification, References.
 
 **Verify:**
-- File exists with frontmatter `model: claude-haiku-4-5`
+- File exists with frontmatter `model: haiku`
 - Body references `implementation-plan.md`, `fix-summary.md`, and `make test`
 - Body documents both `Overall Status: PASSED` and `Overall Status: FAILED` values (so the orchestrator's stop check has a stable string to match)
 
@@ -204,15 +205,16 @@ This skill is loaded into a `claude` session and drives the six steps for a sing
 **Files:** `.claude/agents/security-verifier.md`
 
 **Details:**
-- Frontmatter: `name`, `description`, `model: claude-opus-4-7`, `tools: Read, Grep, Glob, Write`.
-- Role: read `<bug-dir>/fix-summary.md` and the files it lists as changed; scan for injection, hardcoded secrets, insecure comparisons, missing validation, unsafe deps, and XSS/CSRF where relevant.
-- Output `<bug-dir>/security-report.md` only; never edit source files.
-- Each finding must include severity (CRITICAL/HIGH/MEDIUM/LOW/INFO), `file:line`, and a remediation suggestion.
+- Frontmatter: `name`, `description`, `model: opus`, `effort: high`, `tools: Read, Grep, Glob, Write`.
+- Role: read `<bug-dir>/fix-summary.md` and the files it lists as changed; review only the changed sections (the before/after snippets) and their immediate surrounding context — do not audit the whole codebase — scanning for injection (SQL/command/path), hardcoded secrets, insecure comparisons (timing-unsafe equality, type coercion), missing/bypassable validation, unsafe deps introduced by the fix, and XSS/CSRF where the changed code touches response output or state-changing endpoints.
+- Output `<bug-dir>/security-report.md` only; never edit, create, or delete files under `src/` or `tests/`.
+- Each finding must include severity (CRITICAL/HIGH/MEDIUM/LOW/INFO), `file:line`, and a one-sentence remediation suggestion.
+- `security-report.md` sections: Summary (what was reviewed, finding count, highest severity), Findings (per finding: `### <SEVERITY>: <title>`, File `file:line`, Description, Remediation; if none, write "No findings."), References.
 
 **Verify:**
-- File exists with frontmatter `model: claude-opus-4-7`
+- File exists with frontmatter `model: opus`
 - Body references all five severity labels and `security-report.md`
-- `tools:` line does NOT contain `Edit` or `Write` against source paths (write tool present only to produce the report)
+- `tools:` line does NOT contain `Edit`; `Write` is present only to produce the report (the body forbids writing under `src/`/`tests/`)
 
 ---
 

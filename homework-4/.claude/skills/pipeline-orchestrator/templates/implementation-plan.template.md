@@ -32,5 +32,5 @@ After applying all changes, run `make test`. Record the full output in `fix-summ
 
 ## References
 
-- `research/codebase-research.md`
+- {{ bug-dir }}/research/codebase-research.md`
 - {{ each source file to be changed }}
