@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"   # workspace root must be the project dir so .claude/settings.local.json loads and relative permission rules anchor correctly
 BUGS_DIR="$ROOT/context/bugs"
 
 # DEBUG: remove this line to process all bugs
@@ -18,8 +19,7 @@ for bug_dir in "$BUGS_DIR"/*/; do
     continue
   fi
   echo "[run] bugs/$bug_id — invoking orchestrator"
-  ## DEBUG: removed `-p` option from command to enable interactive mode
-  claude --model claude-opus-4-7 --effort xhigh "/pipeline-orchestrator $bug_dir"
+  claude -p --model claude-opus-4-7 --effort xhigh "/pipeline-orchestrator context/bugs/$bug_id"
   processed=$((processed+1))
   echo '-----'
   if [[ -n "${MAX_BUGS:-}" && "$processed" -ge "$MAX_BUGS" ]]; then

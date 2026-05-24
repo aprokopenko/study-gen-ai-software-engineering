@@ -32,10 +32,7 @@ Print: `[Step 1] Codebase research — starting`
 After writing `research/codebase-research.md`, print:
 ```
 [Step 1 complete] Research written to research/codebase-research.md
-Write "next" or "continue" to continue to Step 2 (research verification).
 ```
-
-**Confirmation pause:** Wait for the user to confirm before proceeding.
 
 ---
 
@@ -62,10 +59,7 @@ On stop: print the reason and the path `research/verified-research.md`, then exi
 If not stopped, print:
 ```
 [Step 2 complete] Verified research written to research/verified-research.md
-Write "next" or "continue" to continue to Step 3 (implementation planning).
 ```
-
-**Confirmation pause:** Wait for the user to confirm before proceeding.
 
 ---
 
@@ -84,10 +78,7 @@ Print: `[Step 3] Implementation planning — starting`
 After writing `implementation-plan.md`, print:
 ```
 [Step 3 complete] Implementation plan written to implementation-plan.md
-Write "next" or "continue" to continue to Step 4 (bug fix).
 ```
-
-**Confirmation pause:** Wait for the user to confirm before proceeding.
 
 ---
 
@@ -114,18 +105,13 @@ On stop: print the reason and the path `fix-summary.md`, then exit non-zero.
 If not stopped, print:
 ```
 [Step 4 complete] Fix summary written to fix-summary.md
-Write "next" or "continue" to continue to Step 5 (security review).
 ```
-
-**Confirmation pause:** Wait for the user to confirm before proceeding.
 
 ---
 
 ### Step 5 — Security review
 
 Print: `[Step 5] Security review — starting`
-
-**Skip condition:** If `security-report.md` already exists, print `[Step 5 skipped] security-report.md already exists` and proceed directly to Step 6.
 
 **Performed by:** subagent `security-verifier`.
 
@@ -144,10 +130,7 @@ On stop: print the reason and the path `security-report.md`, then exit non-zero.
 If not stopped, print:
 ```
 [Step 5 complete] Security report written to security-report.md
-Press Enter to continue to Step 6 (unit test generation), or Ctrl-C to abort.
 ```
-
-**Confirmation pause:** Wait for the user to confirm before proceeding.
 
 ---
 
