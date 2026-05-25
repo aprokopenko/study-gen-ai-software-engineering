@@ -27,7 +27,7 @@ Print: `[Step 1] Codebase research — starting`
 
 **Writes:** `research/codebase-research.md`
 
-**How:** Read `bug-context.md` to understand the defect. Investigate the issue and found relevant code in `src/`. Record every relevant finding as a `file:line` reference with a verbatim code excerpt. Capture the root cause, the failure mechanism, and the full scope of impact. Use `templates/codebase-research.template.md` as the artifact shape — do not free-form the output.
+**How:** Read `bug-context.md` to understand the defect. Investigate the issue and found relevant code in `src/`. Record every relevant finding as a `file:line` reference with a verbatim code excerpt. Capture the root cause, the failure mechanism, and the full scope of impact. Use skill related `templates/codebase-research.template.md` as the artifact shape — do not free-form the output.
 
 After writing `research/codebase-research.md`, print:
 ```
@@ -71,9 +71,9 @@ Print: `[Step 3] Implementation planning — starting`
 
 **Reads:** `bug-context.md`, `research/codebase-research.md`
 
-**Writes:** `implementation-plan.md`
+**Writes:** `$bugdir/implementation-plan.md`
 
-**How:** Re-read the codebase research. For each location that needs to change, record the exact `file:line`, quote the current snippet to anchor the location, and write a one-sentence fix intent describing what logic to add, remove, or change and why it resolves the root cause. Do not write replacement code — that is the bug-fixer's job. Use `templates/implementation-plan.template.md` as the artifact shape — do not free-form the output. Fill only the sections defined in the template; do not add any extra sections.
+**How:** Re-read the codebase research. For each location that needs to change, record the exact `file:line`, quote the current snippet to anchor the location, and write a one-sentence fix intent describing what logic to add, remove, or change and why it resolves the root cause. Do not write replacement code — that is the bug-fixer's job. Use skill template `templates/implementation-plan.template.md` as the artifact shape — do not free-form the output. Fill only the sections defined in the template; do not add any extra sections.
 
 After writing `implementation-plan.md`, print:
 ```

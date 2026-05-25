@@ -6,7 +6,7 @@ cd "$ROOT"   # workspace root must be the project dir so .claude/settings.local.
 BUGS_DIR="$ROOT/context/bugs"
 
 # DEBUG: remove this line to process all bugs
-MAX_BUGS=1
+#MAX_BUGS=1
 
 processed=0
 skipped=0

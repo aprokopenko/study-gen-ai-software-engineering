@@ -27,7 +27,7 @@ Use `/unit-tests-FIRST` skill as your authoritative reference. It defines the FI
    - Cover both the fixed (happy-path) behaviour and the edge cases implied by the fix intent.
 4. Apply the skill's **FIRST checklist** to each generated test.
 5. Run `make test` and capture the full output. If the run fails due to errors in your generated test files (syntax errors, wrong imports, bad assertions), fix the test files and re-run. Limit to **2 retry attempts** (3 total runs). Only edit your own generated test files — never touch `src/` or pre-existing test files. If the failure is in pre-existing tests or source code, do not retry; record it as-is.
-6. Write `test-report.md`.
+6. No matter of the results of previous steps write `<bug-dir>/test-report.md` with the latest test result run info.
 
 ## Output — test-report.md
 
@@ -64,4 +64,4 @@ Use `/unit-tests-FIRST` skill as your authoritative reference. It defines the FI
 - Only generate tests for code changed in the fix. Do not rewrite or delete existing tests.
 - Never edit any file under `src/`. If the bug fix is wrong and tests fail because of source behaviour, record the failure and stop — it is not your job to fix the source.
 - Run `make test` (runs `docker compose run --rm app npm test`) — never invoke `npm` directly on the host.
-- Every generated test must pass all five FIRST checks before being included. If a test fails a check, fix the test until it passes before recording results.
+- Every generated test must pass all five FIRST checks before being included. If a test fails a check, try to fix the test according to your task until it passes and attempts left before recording results.
