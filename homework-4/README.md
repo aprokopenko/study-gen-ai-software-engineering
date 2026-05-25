@@ -1,5 +1,11 @@
 # User Registration Micro-Service
 
+> **Student Name**: Oleksandr Prokopenko
+> **Date Submitted**: 25.05.2026
+> **AI Tools Used**: Claude Code (VS Code plugin/CLI), Kiro IDE
+
+---
+
 A minimal REST API micro-service for user registration, intentionally seeded with bugs and a security vulnerability for pipeline/agent exercises.
 
 **Stack:** Node.js 22 + Express + Jest + supertest, containerized with Docker.
@@ -57,6 +63,56 @@ make down
 | `make logs` | Tail container logs |
 | `make restart` | `down` then `up` |
 | `make install` | Run `npm install` inside the container |
+
+---
+
+## Bug-Fix Pipeline
+
+The project includes a 4-agent pipeline that automatically researches, fixes, security-reviews, and writes tests for every seeded bug.
+
+### Agents
+
+| Agent | Model | Role |
+|---|---|---|
+| **Codebase Researcher** *(inline)* | opus | Reads `bug-context.md`, traces the defect in `src/`, writes `research/codebase-research.md` |
+| **Research Verifier** | sonnet | Fact-checks every `file:line` reference in the research, grades quality (HIGH / MEDIUM / LOW), writes `research/verified-research.md` |
+| **Bug Fixer** | haiku | Applies the implementation plan, runs `make test`, writes `fix-summary.md` |
+| **Security Verifier** | opus | Scans changed files for injection, secrets, insecure comparisons, and missing validation; writes `security-report.md` |
+| **Unit Test Generator** | sonnet | Generates Jest + supertest tests for changed code following FIRST principles, runs `make test`, writes `test-report.md` |
+
+**opus** is used for the Security Verifier because security review demands deep reasoning — finding subtle injection paths, timing-side-channels, and auth bypasses requires the strongest available model where cost is secondary to thoroughness. 
+
+**sonnet** covers the Research Verifier and Unit Test Generator: both need solid comprehension and code generation but are well-defined tasks that don't require opus-level reasoning. 
+
+**haiku** handles the Bug Fixer — the implementation plan already tells it exactly what to change, so the task is largely mechanical execution; the fastest and cheapest model with max effort may work here.
+
+### How to run
+
+The pipeline requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`claude` CLI) to be installed and authenticated.
+
+```bash
+./run-pipeline.sh
+```
+
+The script iterates over every directory under `context/bugs/`. A bug is skipped if its `test-report.md` already exists (i.e. it was already processed). Each bug goes through six sequential steps:
+
+```
+Codebase Research → Research Verification → Implementation Planning
+  → Bug Fix → Security Review → Unit Test Generation
+```
+
+Artifacts written per bug:
+
+| File | Written by |
+|---|---|
+| `context/bugs/XXX/research/codebase-research.md` | Researcher (Step 1) |
+| `context/bugs/XXX/research/verified-research.md` | Research Verifier (Step 2) |
+| `context/bugs/XXX/implementation-plan.md` | Planner (Step 3) |
+| `context/bugs/XXX/fix-summary.md` | Bug Fixer (Step 4) |
+| `context/bugs/XXX/security-report.md` | Security Verifier (Step 5) |
+| `context/bugs/XXX/test-report.md` | Unit Test Generator (Step 6) |
+
+The pipeline stops early if research quality is `LOW`, tests fail after a fix, or a `CRITICAL` security finding is detected.
 
 ---
 
