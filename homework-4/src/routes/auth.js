@@ -10,6 +10,9 @@ router.post('/register', (req, res) => {
   if (!username || !email || !password) {
     return res.status(400).json({ error: 'All fields required' });
   }
+  if (findByEmail(email)) {
+    return res.status(409).json({ error: 'Email already in use' });
+  }
   const user = addUser({ username, email, password });
   const token = generateToken(user);
   res.status(201).json({ user: { id: user.id, username, email }, token });
@@ -19,7 +22,7 @@ router.post('/register', (req, res) => {
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
   const user = findByEmail(email);
-  if (!user || password !== user.pasword) {
+  if (!user || password !== user.password) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
   const token = generateToken(user);
