@@ -192,6 +192,12 @@ shared/
 > One component per heading, in execution order. Each stage reads from one shared
 > directory and writes to the next; none calls another directly. File paths follow the
 > proposed project structure above.
+>
+> **Tests are co-located (TDD).** Every task that produces testable source writes its
+> own unit tests in the same task, mirroring the source under `tests/`, covering the
+> happy path and the edge cases that task lists. Coverage accrues incrementally as tasks
+> land. Task 9 is the exception: it adds only the full-pipeline integration test and the
+> PHPUnit/coverage configuration — it does not re-author per-component unit tests.
 
 ### 1. Docker environment & developer tooling
 
@@ -246,15 +252,25 @@ shared/
 
 - **File(s):** `mcp/server.php`, `.mcp.json`
 - **Function/Unit:** tools `get_transaction_status`, `list_pipeline_results`; resource `pipeline://summary`
-- **Prompt:** Build a custom MCP server (PHP runtime; resolve the MCP SDK via context7 first) that makes the pipeline queryable over stdio. Expose `get_transaction_status(transaction_id)` returning the current status from `shared/results`, `list_pipeline_results()` returning a summary of all processed transactions, and a `pipeline://summary` resource returning the latest run summary as text. In `.mcp.json`, register two servers: `context7` and `pipeline-status`. The `pipeline-status` command must launch the server inside a **one-shot container** so the Docker constraint holds — e.g. `docker compose run --rm -T app php mcp/server.php` (no TTY, so stdin/stdout stay clean for the protocol) with `shared/` mounted.
-- **Details:** stdio transport — the server must write nothing but protocol frames to stdout (send logs to stderr/file). Read-only over `shared/results` and the summary. This is launched on demand by the MCP client, not by `docker compose up`. Edge cases: unknown `transaction_id`, no run yet (empty results), stray stdout breaking the JSON-RPC stream.
+- **Prompt:** Build a custom MCP server (PHP runtime) that makes the pipeline queryable over stdio. Expose `get_transaction_status(transaction_id)` returning the current status from `shared/results`, `list_pipeline_results()` returning a summary of all processed transactions, and a `pipeline://summary` resource returning the latest run summary as text. In `.mcp.json`, register two servers: `context7` and `pipeline-status`.
+- **SDK & transport:** Prefer **official PHP MCP SDK** over other libs
+- **Launch (`.mcp.json`):** Launch the server in a **one-shot container over stdio with interactive stdin**: `docker run -i --rm <image> php mcp/server.php`, mounting `shared/` (read-only is fine). Reuse the project's app image if practical; otherwise a small dedicated MCP image is acceptable.
+- **Details:** stdio transport — the server must write nothing but protocol frames to stdout (send logs to stderr/file). Read-only over `shared/results` and the summary. Launched on demand by the MCP client. Edge cases: unknown `transaction_id`, no run yet (empty results), stray stdout breaking the JSON-RPC stream.
+- **Verification (bounded — do NOT thrash):** The acceptance bar is the **unit tests on the transport-agnostic data-access class** (known/unknown txn, list, summary, empty results) passing. Then run **one** smoke test piping the full handshake into the container: line 1 `initialize`, line 2 `notifications/initialized`, line 3 a `tools/call`. A single clean response is sufficient proof. If the live smoke test does not round-trip in ~2 attempts, rely on the unit tests, record the limitation in the context note, and stop — do not keep retrying transport/Docker variations.
 
-### 9. Test suite
+### 9. Test suite (integration + coverage config; unit tests are co-located)
 
-- **File(s):** `tests/Shared/*`, `tests/Stages/*`, `tests/Pipeline/PipelineIntegrationTest.php`, `phpunit.xml.dist`
-- **Function/Unit:** per-stage unit tests + Integrator full-path integration test
-- **Prompt:** Write a test suite covering each stage (validator, fraud detector, settlement), the shared helpers, and one full-pipeline integration test running the integrator on a fixture. Isolate all tests from the real `shared/` directory using a temp working area. Configure coverage reporting so an overall percentage is emitted in a machine-readable form. Tests and coverage run through the Docker `make` targets from Task 1.
-- **Details:** Cover the happy path and every rejection reason (missing field, non-positive amount, bad currency, high-risk). Assert one result per input and correct fee/net math. Target ≥ 90% coverage; the enforced gate lives in Task 10. Emit the overall coverage percentage where the gate hook can read it (e.g. a clover/text report).
+> **Per-component unit tests are NOT written here.** Under this project's TDD workflow
+> each implementation task (Tasks 2–8, 11–12) ships its own unit tests alongside the
+> code it produces (`tests/Shared/*`, `tests/Stages/*`, etc.). Task 9 owns only the
+> cross-cutting pieces: the full-pipeline integration test, the PHPUnit/coverage
+> configuration, and a final consolidation pass. Do not re-write or duplicate the
+> per-component unit tests already created by earlier tasks.
+
+- **File(s):** `tests/Pipeline/PipelineIntegrationTest.php`, `phpunit.xml.dist`
+- **Function/Unit:** Integrator full-path integration test; PHPUnit + coverage config
+- **Prompt:** Add the one full-pipeline integration test that runs the integrator end-to-end on a fixture, and finalise the `phpunit.xml.dist` (test suites + coverage reporting) so an overall percentage is emitted in a machine-readable form. Confirm the suite as a whole (the co-located unit tests from earlier tasks plus this integration test) runs green and meets the coverage target through the Docker `make` targets from Task 1. If any earlier task left a gap in its own unit coverage, note it and have that gap filled in its component test file rather than adding a parallel test here.
+- **Details:** The integration test asserts one result per input and correct fee/net math across the happy path and every rejection reason (missing field, non-positive amount, bad currency, high-risk) end-to-end. Isolate from the real `shared/` directory using a temp working area. Target ≥ 90% overall coverage; the enforced gate lives in Task 10. Emit the overall coverage percentage where the gate hook can read it (e.g. a clover/text report). Coverage accrues incrementally — Task 9 verifies the total, it does not author the bulk of the tests.
 
 ### 10. Coverage-gate hook (blocks push < 80%)
 
