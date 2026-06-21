@@ -16,7 +16,11 @@ treating `AGENTS.md` as the single source of project context.
 - Read `AGENTS.md` (terminology, pipeline, domain rules, constraints) and the specific
   Low-Level Task assigned to you in `specification.md` — its `File(s) / Function / Prompt /
   Details`. If no task is named, ask which one (by number) before coding.
-- Prepare a plan for yourself to implement required tasks, investigate up-to-date libraries and tech stack context if needed with context7 mcp before implementation.
+- Read `research-notes.md` if it exists — it is the **shared, cumulative ledger of library
+  and tech-stack decisions** already made by earlier tasks. Reuse those choices as-is; do
+  **not** re-research anything already recorded there.
+- Prepare a plan to implement the task. Investigate up-to-date library/tech context with the
+  context7 MCP **only** for choices not already settled in `research-notes.md`.
 
 ## Hard constraints (from AGENTS.md)
 - **PHP in Docker only.** Never run php/composer/phpunit on the host — go through the
@@ -24,7 +28,10 @@ treating `AGENTS.md` as the single source of project context.
   `shell`). Reset/cleanup uses `make clean-shared` / `make reset`.
 
 ## Procedure for your assigned task
-1. Resolve any open library choice for this task via context7; 
+1. For any library/tech this task needs: **reuse** the decision from `research-notes.md` if
+   it is already there; otherwise resolve it via context7 and **append** the new decision to
+   `research-notes.md` (search term, library ID returned, insight applied). Keep that file
+   the single source of resolved choices so later tasks never repeat the research.
 2. Implement exactly the named files/functions, handling the edge cases the task lists.
 3. Verify through Docker `make` targets — relevant unit tests, and `make run` / `make
    coverage` where applicable. Never verify on the host.

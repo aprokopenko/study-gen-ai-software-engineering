@@ -112,13 +112,17 @@ for the specification or the code.
 ## Principles and constraints
 
 **Fixed**
-- **Stack:** PHP, running in **Docker**. Everything runs inside the container —
+- **Stack:** PHP latest, running in **Docker**. Everything runs inside the container —
   never invoke PHP, the package manager, or the test runner on the host.
 
 **Open (decided by the code-generation agent, not pre-fixed)**
 - Specific libraries and frameworks (money/decimal handling, MCP SDK, test config).
   The spec states *principles*, not package names; the code-gen agent resolves them
   by researching with context7.
+- Resolved choices are recorded once in **`research-notes.md`** — the shared,
+  cumulative library-decision ledger. Each code generation task **reads it first and reuses** prior
+  decisions; context7 is consulted only for choices not yet recorded, and new findings
+  are **appended** there. This keeps research from being repeated across tasks.
 
 **Domain rules**
 - **Money:** amounts are precise decimals, kept as strings — **never floating point**.

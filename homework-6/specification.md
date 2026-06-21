@@ -45,7 +45,7 @@
 ## 3. Implementation Notes
 
 **Fixed stack**
-- PHP, running inside **Docker**. Never invoke PHP, the package manager, or the test
+- PHP latest, running inside **Docker**. Never invoke PHP, the package manager, or the test
   runner on the host — always go through the container (e.g. `make` targets).
 
 **Open choices (resolved by the code-generation agent via context7, not pre-fixed)**
