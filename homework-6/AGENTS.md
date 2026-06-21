@@ -84,6 +84,16 @@ agent). It is the detailed contract for the system: objectives, constraints, and
 per-agent / per-stage description of what each one builds, checks, or transforms.
 Read it before generating code, tests, or docs.
 
+## Code generation: use the `code-generator` subagent
+
+All code generation for tasks from `specification.md` should be performed by the **`code-generator` subagent**, not ad hoc in the main session. 
+
+- **When to use it.** Any time code, tests, config, Docker/Make tooling, the MCP server, or
+  docs need to be created or changed for this project, delegate to `code-generator` rather
+  than writing it inline.
+- **No orchestrator.** Tasks are dispatched one by one (by you or the user); there is no
+  automated loop.
+
 ## Agent working conventions
 
 Every AI agent must leave a trace of its work in the **`./context/`** folder, so the
