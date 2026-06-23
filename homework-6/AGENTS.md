@@ -112,7 +112,7 @@ for the specification or the code.
 ## Principles and constraints
 
 **Fixed**
-- **Stack:** PHP latest, running in **Docker**. Everything runs inside the container —
+- **Stack:** PHP latest stable, running in **Docker**. Everything runs inside the container —
   never invoke PHP, the package manager, or the test runner on the host.
 
 **Open (decided by the code-generation agent, not pre-fixed)**

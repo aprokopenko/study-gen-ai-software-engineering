@@ -45,8 +45,13 @@
 ## 3. Implementation Notes
 
 **Fixed stack**
-- PHP latest, running inside **Docker**. Never invoke PHP, the package manager, or the test
-  runner on the host — always go through the container (e.g. `make` targets).
+- PHP latest stable, running inside **Docker**. Never invoke PHP, the package manager, or
+  the test runner on the host — always go through the container (e.g. `make` targets).
+
+**Always pin to the verified latest stable release**
+- For *every* part of the stack — the PHP runtime/image tag, each Composer dependency, the
+  test runner, the coverage driver, the MCP SDK, and any base image — the code-gen agent
+  must pin the **current latest stable release, confirmed by checking now** via context7. **Never infer a version number from training data**. Record the verified version and how it was confirmed in `research-notes.md`, and follow any resulting compatibility constraints (e.g. a newer PHP requiring a newer PHPUnit major) through to a compatible, pinned set.
 
 **Open choices (resolved by the code-generation agent via context7, not pre-fixed)**
 - Decimal/money handling library, MCP server SDK/runtime for PHP, and test/coverage
