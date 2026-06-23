@@ -169,3 +169,65 @@ filenames are appended to the `errors` key in the returned summary array. This a
 silent miscounting without crashing the reporter.
 
 <!-- Append new task decisions below this line -->
+
+---
+
+## Task 8 — Custom MCP server (pipeline-status) (2026-06-23)
+
+### Query 1: Resolve PHP MCP SDK library ID
+
+- **context7 search term:** `mcp/sdk` → library ID `/modelcontextprotocol/php-sdk`
+  (High reputation, 959 snippets, benchmark 61.4 — the official PHP SDK)
+- **Finding:** Official PHP SDK for Model Context Protocol. Provides `Server::builder()`,
+  `StdioTransport`, `#[McpTool]`, `#[McpResource]` PHP attributes, and an explicit
+  `addTool()` / `addResource()` builder API that does not require Symfony Finder.
+
+### Query 2: StdioTransport + tools/resources registration
+
+- **context7 search term:** `/modelcontextprotocol/php-sdk`
+- **Query:** "StdioTransport server tools resources register latest version installation composer require"
+- **Finding:**
+  - `composer require mcp/sdk` installed **v0.6.0** (2026-06-02) — latest stable.
+  - `Server::builder()->addTool(handler: $closure, name: '...', description: '...', inputSchema: [...])`
+    registers tools without auto-discovery (no Symfony Finder dependency needed).
+  - `Server::builder()->addResource(handler: $closure, uri: '...', mimeType: '...')`
+    registers static resources.
+  - `StdioTransport` reads JSON-RPC frames from STDIN and writes to STDOUT.
+    **No stray stdout allowed** — any echo/print before/after `$server->run()` breaks the stream.
+  - The container must be launched with `-i` (interactive stdin) and NO `-t` (no TTY).
+  - The project source must be mounted so `vendor/autoload.php` and `mcp/server.php` are reachable.
+
+### Decision: mcp/sdk v0.6.0
+
+**Chosen package:** `mcp/sdk ^0.6.0` (pinned in `composer.json`)
+
+**Rationale:**
+1. Only official PHP MCP SDK — avoids `php-mcp/server` (ReactPHP-based, known to thrash).
+2. `addTool()` / `addResource()` builder API requires no Symfony Finder; simpler and leaner.
+3. StdioTransport is the correct transport for one-shot stdio containers.
+4. v0.6.0 is the current latest stable release (2026-06-02).
+
+### `.mcp.json` launch line and rationale
+
+```json
+"command": "docker",
+"args": ["run", "-i", "--rm", "-w", "/app", "-v", "${PWD}:/app",
+         "-v", "${PWD}/shared:/app/shared:ro", "homework-6-app", "php", "mcp/server.php"]
+```
+
+**Rationale:**
+- `-i` (not `-t`): interactive stdin for JSON-RPC frames; TTY would corrupt the byte stream.
+- `-w /app`: working directory matches the compose service so relative paths (`mcp/server.php`,
+  `vendor/autoload.php`) resolve correctly.
+- `-v ${PWD}:/app`: mounts the full project source (code + vendor/) read-write so the server
+  can load autoload.php.  The spec says read-only is fine for shared/; the source mount must
+  be read-write for Composer's autoloader cache.
+- `-v ${PWD}/shared:/app/shared:ro`: second, explicit read-only mount so results are readable
+  but the MCP server cannot accidentally modify pipeline output.
+- `homework-6-app`: the project's pre-built Docker image (Task 1).
+
+### Pinned versions (Task 8 additions)
+
+| Component | Pinned version | How confirmed                                  |
+|-----------|----------------|------------------------------------------------|
+| mcp/sdk   | `v0.6.0`       | `composer require` inside container output     |
