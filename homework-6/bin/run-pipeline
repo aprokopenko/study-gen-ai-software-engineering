@@ -1,0 +1,51 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * run-pipeline — CLI entrypoint for the banking transaction-processing pipeline.
+ *
+ * Usage:
+ *   php bin/run-pipeline [input-file]
+ *
+ * The default input file is sample-transactions.json in the project root.
+ * The shared/ directory is resolved relative to the project root (one level up
+ * from this script's bin/ directory).
+ *
+ * Exit codes:
+ *   0 — all transactions reached a final outcome in shared/results/
+ *   1 — one or more transactions failed to reach a final outcome, or a fatal
+ *       error occurred (unreadable file, parse error, etc.)
+ */
+
+// Locate the project root (one level above bin/).
+$projectRoot = dirname(__DIR__);
+
+// Bootstrap Composer autoloader.
+$autoload = $projectRoot . '/vendor/autoload.php';
+if (!file_exists($autoload)) {
+    fwrite(STDERR, "ERROR: vendor/autoload.php not found. Run `make install` first.\n");
+    exit(1);
+}
+require $autoload;
+
+use BankingPipeline\Pipeline\Integrator;
+
+// Resolve the input file.
+$inputFile = isset($argv[1])
+    ? $argv[1]
+    : $projectRoot . '/sample-transactions.json';
+
+// The shared/ runtime directory lives at the project root.
+$sharedDir = $projectRoot . '/shared';
+
+// Construct the integrator with the default stdout sink (null → fwrite(STDOUT)).
+$integrator = new Integrator(
+    baseDir: $sharedDir,
+    sink: null, // default: write to STDOUT
+);
+
+$exitCode = $integrator->run($inputFile);
+
+exit($exitCode);

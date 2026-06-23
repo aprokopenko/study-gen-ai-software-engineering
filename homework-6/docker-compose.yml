@@ -1,0 +1,24 @@
+# docker-compose.yml — homework-6 banking transaction-processing pipeline
+#
+# Defines the `app` service used for all PHP/Composer/PHPUnit work.
+# The Makefile exports UID/GID so the container runs as the host user:
+#   export UID := $(shell id -u)
+#   export GID := $(shell id -g)
+# This ensures files written to the bind-mounted shared/ directory are
+# owned by the host user and deletable without sudo.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /app
+    volumes:
+      # Source code (read-write so Composer can write vendor/ into the container mount)
+      - .:/app
+      # Runtime message queues — kept separate so shared/ can be cleared independently.
+      # Already covered by the . mount above, but listed explicitly for clarity.
+    environment:
+      # Disable xdebug when not needed (pcov is the coverage driver)
+      XDEBUG_MODE: "off"
