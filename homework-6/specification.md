@@ -159,6 +159,9 @@ shared/
 - Automated tests cover each step and the full pipeline path. A hook **blocks push
   when coverage < 80%**; target **≥ 90%**. Tests must not touch the real `shared/`
   directory (use a temp working area).
+- The suite runs **clean**: `make test` shows only the runner's own progress/results
+  (no pipeline/application output bleeding through) and **zero deprecation warnings**;
+  tests use current framework idioms (PHPUnit attributes, not doc-comment metadata).
 
 ## 4. Context
 
@@ -238,8 +241,8 @@ shared/
 
 - **File(s):** `src/Pipeline/Integrator.php`, entrypoint `bin/run-pipeline`
 - **Function/Unit:** `Integrator::run(string $inputFile): int`
-- **Prompt:** Implement the integrator that runs the pipeline end-to-end: create the `shared/` directory tree if missing, clear prior run state, load `sample-transactions.json`, wrap each record in the standard envelope and drop it in `shared/input`, then run the stages in order (validator → fraud detector → settlement) so every transaction reaches `shared/results`. Print a progress trace and exit non-zero if any transaction fails to reach a final outcome.
-- **Details:** Idempotent setup; clean start each run. Must guarantee one result file per input transaction. Edge cases: empty input file, malformed JSON record.
+- **Prompt:** Implement the integrator that runs the pipeline end-to-end: create the `shared/` directory tree if missing, clear prior run state, load `sample-transactions.json`, wrap each record in the standard envelope and drop it in `shared/input`, then run the stages in order (validator → fraud detector → settlement) so every transaction reaches `shared/results`. Emit a progress trace through an **injectable output sink** (a callable/stream injected via the constructor, defaulting to stdout) — never hard-code `echo`/`print` in the run logic — so the CLI prints normally while tests pass a silent or capturing sink. Exit non-zero if any transaction fails to reach a final outcome.
+- **Details:** Idempotent setup; clean start each run. Must guarantee one result file per input transaction. The progress trace must be fully silenceable in tests (no pipeline output during `make test`). Edge cases: empty input file, malformed JSON record.
 
 ### 7. Run summary reporter
 
@@ -269,7 +272,7 @@ shared/
 
 - **File(s):** `tests/Pipeline/PipelineIntegrationTest.php`, `phpunit.xml.dist`
 - **Function/Unit:** Integrator full-path integration test; PHPUnit + coverage config
-- **Prompt:** Add the one full-pipeline integration test that runs the integrator end-to-end on a fixture, and finalise the `phpunit.xml.dist` (test suites + coverage reporting) so an overall percentage is emitted in a machine-readable form. Confirm the suite as a whole (the co-located unit tests from earlier tasks plus this integration test) runs green and meets the coverage target through the Docker `make` targets from Task 1. If any earlier task left a gap in its own unit coverage, note it and have that gap filled in its component test file rather than adding a parallel test here.
+- **Prompt:** Add the one full-pipeline integration test that runs the integrator end-to-end on a fixture, and finalise the `phpunit.xml.dist` (test suites + coverage reporting) so an overall percentage is emitted in a machine-readable form. Confirm the suite as a whole (the co-located unit tests from earlier tasks plus this integration test) runs green and meets the coverage target through the Docker `make` targets from Task 1. As the consolidation owner, also verify the suite is **clean**: `make test` shows only the runner's progress/results with **no pipeline or application output bleeding through**, and reports **zero deprecations**. If any earlier task left a gap in its own unit coverage, note it and have that gap filled in its component test file rather than adding a parallel test here.
 - **Details:** The integration test asserts one result per input and correct fee/net math across the happy path and every rejection reason (missing field, non-positive amount, bad currency, high-risk) end-to-end. Isolate from the real `shared/` directory using a temp working area. Target ≥ 90% overall coverage; the enforced gate lives in Task 10. Emit the overall coverage percentage where the gate hook can read it (e.g. a clover/text report). Coverage accrues incrementally — Task 9 verifies the total, it does not author the bulk of the tests.
 
 ### 10. Coverage-gate hook (blocks push < 80%)
