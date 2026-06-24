@@ -28,4 +28,5 @@ if [ ! -x "$GATE" ]; then
     exit 1
 fi
 
+echo "pre-push: coverage gate is running..."
 exec "$GATE"
