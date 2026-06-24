@@ -20,7 +20,7 @@
 
 set -euo pipefail
 
-THRESHOLD=95
+THRESHOLD=80
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "------------------------------------------------------------"

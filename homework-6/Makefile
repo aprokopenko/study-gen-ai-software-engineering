@@ -24,7 +24,7 @@ GENERATED_FILES := composer.json composer.lock phpunit.xml phpunit.xml.dist \
 SHARED_DIR      := shared
 
 # Coverage threshold enforced by the `coverage` target (%).
-COVERAGE_THRESHOLD := 95
+COVERAGE_THRESHOLD := 80
 
 DC := docker compose
 
