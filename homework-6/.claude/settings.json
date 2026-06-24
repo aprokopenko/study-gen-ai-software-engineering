@@ -10,5 +10,18 @@
       "mcp__pipeline-status__list_pipeline_results",
       "mcp__pipeline-status__get_transaction_status"
     ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/coverage-gate-pretool.sh"
+          }
+        ]
+      }
+    ]
   }
 }

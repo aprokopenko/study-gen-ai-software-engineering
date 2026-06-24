@@ -69,7 +69,7 @@ homework-6/
 │   ├── Stages/          ← pipeline stages: Validator, FraudDetector, Settlement
 │   ├── Pipeline/        ← orchestration: Integrator, Reporter
 │   └── Config/          ← documented constants: risk weights/cutoff, fee rate, ISO 4217 set
-├── bin/                 ← CLI entrypoints: run-pipeline, validate-transactions
+├── bin/                 ← CLI entrypoints: run-pipeline, validate-transactions, coverage-gate.sh
 ├── mcp/                 ← custom pipeline-status MCP server (server.php)
 ├── tests/               ← mirrors src/ (Shared/, Stages/, Pipeline/) + integration test
 ├── shared/              ← runtime queues: input/ processing/ output/ results/ (gitignored)
@@ -78,7 +78,6 @@ homework-6/
 ├── .claude/
 │   ├── skills/          ← /run-pipeline, /validate-transactions (SKILL.md each)
 │   └── settings.json    ← coverage-gate hook (blocks push < 80%)
-├── scripts/             ← coverage-gate.sh and other hook helpers
 ├── Dockerfile           ← PHP CLI image: extensions for decimal/money + coverage, Composer
 ├── docker-compose.yml   ← `app` service for dev/pipeline/tests (bind-mounts source + shared/)
 ├── Makefile             ← targets wrapping docker compose (build, run, test, coverage, mcp…)
@@ -282,7 +281,7 @@ shared/
 
 ### 10. Coverage-gate hook (blocks push < 80%)
 
-- **File(s):** `.claude/settings.json` (hook config), supporting script e.g. `scripts/coverage-gate.sh` and/or `.githooks/pre-push`
+- **File(s):** `.claude/settings.json` (hook config), supporting script e.g. `bin/coverage-gate.sh` and/or `.githooks/pre-push`
 - **Function/Unit:** pre-push hook that runs `make coverage` and enforces the threshold
 - **Prompt:** Add the coverage gate required by the assignment: a hook that runs the test suite with coverage in the container (`make coverage` from Task 1), parses the overall percentage, and **blocks the push** with a non-zero exit when it is below 80%. Wire it in `.claude/settings.json` (and/or a git `pre-push` hook the repo installs). Print the measured coverage and the threshold so the failure is self-explanatory.
 - **Details:** Must **fail**, not merely warn. Threshold 80% (target 90%). Reuses the Task 9 suite and the Task 1 `coverage` target. Edge cases: missing/unreadable coverage report → treat as failure; coverage exactly at 80% → allow (gate is `< 80%`).

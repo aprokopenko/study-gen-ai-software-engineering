@@ -16,7 +16,7 @@ export UID := $(shell id -u)
 export GID := $(shell id -g)
 
 # Artifacts produced by code generation (safe to delete and regenerate).
-GENERATED_DIRS  := src tests bin mcp scripts docs context vendor .composer-cache
+GENERATED_DIRS  := src tests bin mcp docs context vendor .composer-cache
 GENERATED_FILES := composer.json composer.lock phpunit.xml phpunit.xml.dist \
                    Dockerfile docker-compose.yml .dockerignore \
                    README.md HOWTORUN.md research-notes.md \
@@ -29,7 +29,7 @@ COVERAGE_THRESHOLD := 80
 DC := docker compose
 
 .DEFAULT_GOAL := help
-.PHONY: help build install run validate test coverage mcp shell clean-shared clean reset
+.PHONY: help build install install-hooks run validate test coverage mcp shell clean-shared clean reset
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -44,6 +44,10 @@ build: ## Build (or rebuild) the Docker image
 
 install: ## Install Composer dependencies inside the container
 	$(DC) run --rm app composer install --no-interaction --prefer-dist
+
+install-hooks: ## Enable the git pre-push coverage gate (run once per clone)
+	git config core.hooksPath .githooks
+	@echo "Git hooks path set to .githooks — pre-push coverage gate is active."
 
 # ---------------------------------------------------------------------------
 # Pipeline execution

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# .githooks/pre-push
+#
+# Git pre-push hook — blocks the push when test coverage < 80%.
+#
+# This hook is called by `git push` before sending data to the remote.
+# A non-zero exit blocks the push.
+#
+# INSTALLATION (one-time per developer clone):
+#   git config core.hooksPath .githooks
+# Or use the Makefile helper:
+#   make install-hooks
+#
+# The hook delegates all coverage logic to bin/coverage-gate.sh,
+# which runs `make coverage` inside Docker (pcov) so no PHP/Composer/
+# PHPUnit is required on the host.
+
+set -euo pipefail
+
+# Resolve the project root relative to this hook file.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+GATE="$PROJECT_DIR/bin/coverage-gate.sh"
+
+if [ ! -x "$GATE" ]; then
+    echo "pre-push: ERROR — coverage gate script not found or not executable: $GATE" >&2
+    echo "pre-push: Push BLOCKED (coverage gate misconfigured)." >&2
+    exit 1
+fi
+
+exec "$GATE"
