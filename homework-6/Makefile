@@ -46,8 +46,8 @@ install: ## Install Composer dependencies inside the container
 	$(DC) run --rm app composer install --no-interaction --prefer-dist
 
 install-hooks: ## Enable the git pre-push coverage gate (run once per clone)
-	git config core.hooksPath .githooks
-	@echo "Git hooks path set to .githooks — pre-push coverage gate is active."
+	git config core.hooksPath "$(CURDIR)/.githooks"
+	@echo "Git hooks path set to $(CURDIR)/.githooks — pre-push coverage gate is active."
 
 # ---------------------------------------------------------------------------
 # Pipeline execution

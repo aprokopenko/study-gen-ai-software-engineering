@@ -2,3 +2,7 @@
 vendor/
 .composer-cache/
 shared/*
+.phpunit.result.cache
+coverage-junit.xml
+coverage.xml
+
