@@ -1,0 +1,8 @@
+.claude/settings.local.json
+vendor/
+.composer-cache/
+shared/*
+.phpunit.result.cache
+coverage-junit.xml
+coverage.xml
+

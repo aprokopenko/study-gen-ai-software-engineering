@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+      }
+    },
+    "pipeline-status": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-w",
+        "/app",
+        "-v",
+        "${PWD}:/app",
+        "-v",
+        "${PWD}/shared:/app/shared:ro",
+        "homework-6-app",
+        "php",
+        "mcp/server.php"
+      ]
+    }
+  }
+}

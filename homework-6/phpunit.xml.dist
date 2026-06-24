@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         failOnDeprecation="true"
+         failOnPhpunitDeprecation="true"
+         failOnNotice="true"
+         failOnWarning="true"
+>
+    <!-- Test suites: Unit (Tasks 2-8 co-located tests) + Integration (Task 9). -->
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Shared</directory>
+            <directory>tests/Stages</directory>
+            <directory>tests/Pipeline</directory>
+            <directory>tests/Mcp</directory>
+            <exclude>tests/Pipeline/PipelineIntegrationTest.php</exclude>
+        </testsuite>
+        <testsuite name="Integration">
+            <file>tests/Pipeline/PipelineIntegrationTest.php</file>
+        </testsuite>
+    </testsuites>
+
+    <!-- Coverage source: only src/ is measured; vendor/ and entry-point wrappers excluded. -->
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
+
+    <!-- Coverage logging: JUnit report alongside the text+clover reports the Makefile emits. -->
+    <logging>
+        <junit outputFile="coverage-junit.xml"/>
+    </logging>
+</phpunit>
