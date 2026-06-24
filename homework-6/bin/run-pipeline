@@ -31,6 +31,7 @@ if (!file_exists($autoload)) {
 require $autoload;
 
 use BankingPipeline\Pipeline\Integrator;
+use BankingPipeline\Pipeline\Reporter;
 
 // Resolve the input file.
 $inputFile = isset($argv[1])
@@ -47,5 +48,18 @@ $integrator = new Integrator(
 );
 
 $exitCode = $integrator->run($inputFile);
+
+// Write the run summary (summary.json + summary.txt) from the final results.
+// This is what the /run-pipeline skill and the MCP `pipeline://summary` resource
+// read, so it must be produced as part of every run.
+$reporter = new Reporter($sharedDir . '/results');
+$summary  = $reporter->summarize();
+
+fwrite(STDOUT, sprintf(
+    "Run summary written to shared/results/ — processed %d, settled %d, rejected %d.\n",
+    $summary['total_processed'],
+    $summary['settled_count'],
+    $summary['rejected_count'],
+));
 
 exit($exitCode);

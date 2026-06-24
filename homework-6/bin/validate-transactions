@@ -1,0 +1,57 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * validate-transactions — dry-run validation CLI for the banking pipeline.
+ *
+ * Usage:
+ *   php bin/validate-transactions [input-file]
+ *
+ * The default input file is sample-transactions.json in the project root.
+ *
+ * Dry-run: only the Validator's pure process() logic runs — no fraud scoring,
+ * no settlement, and NOTHING is written to shared/. The report is printed to
+ * stdout so it can be read by the caller or piped.
+ *
+ * Exit codes:
+ *   0 — report printed successfully (even if some transactions are invalid)
+ *   1 — fatal error: file not found, unreadable, or not valid JSON
+ */
+
+// Locate the project root (one level above bin/).
+$projectRoot = dirname(__DIR__);
+
+// Bootstrap Composer autoloader.
+$autoload = $projectRoot . '/vendor/autoload.php';
+if (!file_exists($autoload)) {
+    fwrite(STDERR, "ERROR: vendor/autoload.php not found. Run `make install` first.\n");
+    exit(1);
+}
+require $autoload;
+
+use BankingPipeline\Pipeline\ValidationReport;
+
+// Resolve the input file (optional first argument, default: sample-transactions.json).
+$inputFile = isset($argv[1])
+    ? $argv[1]
+    : $projectRoot . '/sample-transactions.json';
+
+// Check the file exists before handing it to ValidationReport.
+if (!file_exists($inputFile)) {
+    fwrite(STDERR, "ERROR: Input file not found: {$inputFile}\n");
+    exit(1);
+}
+
+// Run the dry-run validator with the default stdout sink.
+$report = new ValidationReport(sink: null);
+
+try {
+    $report->run($inputFile);
+} catch (\RuntimeException $e) {
+    fwrite(STDERR, "ERROR: " . $e->getMessage() . "\n");
+    exit(1);
+}
+
+exit(0);
