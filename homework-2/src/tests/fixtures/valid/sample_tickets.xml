@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tickets>
+  <ticket>
+    <customer_id>cust-201</customer_id>
+    <customer_email>ivan@example.com</customer_email>
+    <customer_name>Ivan Petrov</customer_name>
+    <subject>Dashboard not loading</subject>
+    <description>The main dashboard takes more than 30 seconds to load and sometimes times out completely.</description>
+    <category>technical_issue</category>
+    <priority>high</priority>
+    <status>new</status>
+    <tags>
+      <tag>dashboard</tag>
+      <tag>performance</tag>
+    </tags>
+    <metadata>
+      <source>web_form</source>
+      <browser>Chrome 121</browser>
+      <device_type>desktop</device_type>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust-202</customer_id>
+    <customer_email>julia@example.com</customer_email>
+    <customer_name>Julia Chen</customer_name>
+    <subject>Wrong currency displayed</subject>
+    <description>The prices are displayed in USD but my account is set to EUR. This is causing confusion.</description>
+    <category>billing_question</category>
+    <priority>medium</priority>
+    <status>new</status>
+    <tags>
+      <tag>currency</tag>
+      <tag>billing</tag>
+    </tags>
+    <metadata>
+      <source>email</source>
+    </metadata>
+  </ticket>
+  <ticket>
+    <customer_id>cust-203</customer_id>
+    <customer_email>karl@example.com</customer_email>
+    <customer_name>Karl Schmidt</customer_name>
+    <subject>Request for bulk user import</subject>
+    <description>We need the ability to import multiple users at once via CSV file for our enterprise account.</description>
+    <category>feature_request</category>
+    <priority>low</priority>
+    <status>new</status>
+    <metadata>
+      <source>api</source>
+    </metadata>
+  </ticket>
+</tickets>
